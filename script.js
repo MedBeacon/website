@@ -40,13 +40,33 @@ document.querySelectorAll(
 // ---- Contact form ----
 document.getElementById('contactForm').addEventListener('submit', (e) => {
   e.preventDefault();
-  const btn = e.target.querySelector('button[type="submit"]');
-  btn.textContent = 'Message Sent!';
-  btn.style.background = 'var(--accent)';
+  const form = e.target;
+  const btn = form.querySelector('button[type="submit"]');
+  btn.textContent = 'Sending…';
   btn.disabled = true;
-  setTimeout(() => {
-    btn.textContent = 'Send Message';
-    btn.disabled = false;
-    e.target.reset();
-  }, 3000);
+
+  fetch('/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams(new FormData(form)).toString()
+  })
+    .then(res => {
+      if (res.ok) {
+        btn.textContent = 'Message Sent!';
+        btn.style.background = 'var(--accent)';
+        form.reset();
+      } else {
+        btn.textContent = 'Something went wrong';
+      }
+    })
+    .catch(() => {
+      btn.textContent = 'Something went wrong';
+    })
+    .finally(() => {
+      setTimeout(() => {
+        btn.textContent = 'Send Message';
+        btn.style.background = '';
+        btn.disabled = false;
+      }, 3000);
+    });
 });

@@ -3,6 +3,8 @@
    Modern, minimalist, bold, mobile-first
    ============================================ */
 
+.visually-hidden { position: absolute; left: -9999px; height: 0; overflow: hidden; }
+
 :root {
   --bg: #ffffff;
   --bg-elevated: #f9f8f6;

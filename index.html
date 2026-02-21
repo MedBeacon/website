@@ -378,7 +378,9 @@
           <p class="section-desc">Contact us today to learn how MedBeacon can transform sepsis detection and management at your facility.</p>
           <p class="contact__email">info@medbeacon.ai</p>
         </div>
-        <form class="contact__form" id="contactForm">
+        <form class="contact__form" id="contactForm" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+          <input type="hidden" name="form-name" value="contact">
+          <p class="visually-hidden"><label>Don't fill this out: <input name="bot-field"></label></p>
           <div class="form__row">
             <div class="form__field">
               <label for="firstName">First name *</label>
