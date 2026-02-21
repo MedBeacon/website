@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MedBeacon — AI-Powered Sepsis Detection</title>
+  <meta name="description" content="Transforming healthcare through AI-driven early disease detection, clinician-friendly workflows and better patient outcomes.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <div class="nav__inner">
+      <a href="#" class="nav__logo">
+        <img src="images/logo.png" alt="MedBeacon" class="nav__logo-img">
+      </a>
+      <button class="nav__toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+      </button>
+      <div class="nav__links" id="navLinks">
+        <a href="#solution">Solution</a>
+        <a href="#capabilities">Capabilities</a>
+        <a href="#how-it-works">How It Works</a>
+        <a href="#about">About</a>
+        <a href="#contact" class="nav__cta">Request Demo</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="hero__bg">
+      <div class="hero__grid"></div>
+    </div>
+    <div class="container hero__content">
+      <div class="hero__text">
+        <p class="hero__tag">AI-Powered Clinical Intelligence</p>
+        <h1 class="hero__title">Detect Sepsis<br><span class="text-accent">Before It's Too Late</span></h1>
+        <p class="hero__sub">High-performing hospitals recognize that EHRs do not have all the answers, especially amid razor-thin margins and staffing shortages. Many are turning to MedBeacon as the better choice for real-time disease management, starting with sepsis.</p>
+        <div class="hero__actions">
+          <a href="#contact" class="btn btn--primary">Request a Demo</a>
+          <a href="#solution" class="btn btn--ghost">Learn More</a>
+        </div>
+        <div class="hero__ticker">
+          <span>Reduced Mortality</span>
+          <span>Shorter LOS</span>
+          <span>Fewer ICU Days</span>
+          <span>SEP-1 Compliance</span>
+          <span>Improve Margins</span>
+          <span>Better Outcomes</span>
+        </div>
+      </div>
+      <div class="hero__phones">
+        <div class="hero__phone hero__phone--back">
+          <img src="images/app-list.png" alt="MedBeacon patient list view">
+        </div>
+        <div class="hero__phone hero__phone--front">
+          <img src="images/app-detail.png" alt="MedBeacon patient detail view">
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Stats -->
+  <section class="stats">
+    <div class="container">
+      <p class="section-tag">The Sepsis Threat</p>
+      <h2 class="section-title">A crisis hiding<br>in plain sight</h2>
+      <p class="section-desc">Sepsis is a leading cause of hospital deaths, readmissions, and costs. For hospitals, managing it is a never-ending struggle.</p>
+      <div class="stats__grid">
+        <div class="stat">
+          <span class="stat__number">350K+</span>
+          <span class="stat__label">Deaths each year in the U.S.</span>
+        </div>
+        <div class="stat">
+          <span class="stat__number">1 in 3</span>
+          <span class="stat__label">Hospital deaths involve sepsis</span>
+        </div>
+        <div class="stat">
+          <span class="stat__number">1.7M+</span>
+          <span class="stat__label">People diagnosed each year</span>
+        </div>
+        <div class="stat">
+          <span class="stat__number">$62B</span>
+          <span class="stat__label">Annual treatment costs</span>
+        </div>
+      </div>
+      <p class="stats__source">Source: CDC, Sepsis Alliance</p>
+    </div>
+  </section>
+
+  <!-- Solution -->
+  <section class="solution" id="solution">
+    <div class="container">
+      <p class="section-tag">Our Solution</p>
+      <h2 class="section-title">Why early detection<br>changes everything</h2>
+      <p class="section-desc">Sepsis is a race against the clock — survival rates drop with every hour of delayed treatment. Yet most EHR-generated alerts lack specificity; studies suggest up to 90% are false positives or unnecessary. Too many alerts. Too little confidence. Too much risk.</p>
+
+      <div class="solution__needs">
+        <div class="need">
+          <div class="need__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 2a2 2 0 0 1 2 2v5l3 3H8l3-3V4a2 2 0 0 1 0-4z"/><path d="M3.5 14h17"/><path d="M12 14v8"/><path d="M7 18h10"/></svg>
+          </div>
+          <h3>Nurses</h3>
+          <p>Need quicker, comprehensive screening that doesn't trigger unnecessary alerts to physicians.</p>
+        </div>
+        <div class="need">
+          <div class="need__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6 6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6 6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/></svg>
+          </div>
+          <h3>Physicians</h3>
+          <p>Need precise, patient-specific data with the ability to easily order sepsis bundles — even remotely.</p>
+        </div>
+        <div class="need">
+          <div class="need__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M7 16l4-8 4 5 4-9"/></svg>
+          </div>
+          <h3>Administrators</h3>
+          <p>Need dashboards to monitor alert activity, false-positive rates, and protocol compliance across departments.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features">
+    <div class="container">
+      <p class="section-tag">MedBeacon Platform</p>
+      <h2 class="section-title">Designed to help,<br>not disrupt</h2>
+      <p class="section-desc">MedBeacon's AI-guided system acts as a guardian assistant at the point of care. It combats alert fatigue by balancing objective clinical data with subjective observations — delivering timely, actionable insights that give clinicians flexibility in determining next steps.</p>
+
+      <div class="features__grid">
+        <div class="feature">
+          <div class="feature__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          </div>
+          <h3>Faster Detection</h3>
+          <p>AI-driven mobile alerts with higher specificity, individualized to each patient, helping clinicians respond up to an hour sooner.</p>
+        </div>
+        <div class="feature">
+          <div class="feature__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <h3>Guided Interventions</h3>
+          <p>One-tap best-practice order sets and seamless EHR integration to accelerate care and preserve data integrity.</p>
+        </div>
+        <div class="feature">
+          <div class="feature__icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <h3>Continuous Monitoring</h3>
+          <p>Automated, intelligent tracking ensures patients keep improving and alerts care teams instantly if recovery stalls.</p>
+        </div>
+      </div>
+
+      <p class="features__credibility">MedBeacon uses trusted, enterprise-grade AI and Red Rover Health's real-time bidirectional EHR integration. Built by the team behind the St. John Sepsis Agent for Cerner (now Oracle), MedBeacon brings more than 20 years of clinical workflow innovation to healthcare's biggest challenges.</p>
+    </div>
+  </section>
+
+  <!-- Comparison -->
+  <section class="comparison" id="comparison">
+    <div class="container">
+      <p class="section-tag">Why MedBeacon</p>
+      <h2 class="section-title">Built different</h2>
+      <div class="comparison__table-wrap">
+        <table class="comparison__table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th class="highlight">MedBeacon</th>
+              <th>Legacy EHR</th>
+              <th>Competitors</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Early, individualized detection</td>
+              <td class="highlight"><span class="check">&#10003;</span></td>
+              <td><span class="cross">&#10005;</span></td>
+              <td><span class="cross">&#10005;</span></td>
+            </tr>
+            <tr>
+              <td>Automated continuous monitoring</td>
+              <td class="highlight"><span class="check">&#10003;</span></td>
+              <td><span class="cross">&#10005;</span></td>
+              <td><span class="cross">&#10005;</span></td>
+            </tr>
+            <tr>
+              <td>Workflow-friendly</td>
+              <td class="highlight"><span class="check">&#10003;</span></td>
+              <td><span class="check">&#10003;</span></td>
+              <td><span class="cross">&#10005;</span></td>
+            </tr>
+            <tr>
+              <td>AI-guided patient interventions</td>
+              <td class="highlight"><span class="check">&#10003;</span></td>
+              <td><span class="cross">&#10005;</span></td>
+              <td><span class="cross">&#10005;</span></td>
+            </tr>
+            <tr>
+              <td>Bidirectional EHR integration</td>
+              <td class="highlight"><span class="check">&#10003;</span></td>
+              <td><span class="check">&#10003;</span></td>
+              <td><span class="cross">&#10005;</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Capabilities -->
+  <section class="capabilities" id="capabilities">
+    <div class="container">
+      <p class="section-tag">Capabilities</p>
+      <h2 class="section-title">Everything clinicians need.<br>Nothing they don't.</h2>
+
+      <div class="capabilities__grid">
+        <div class="capability">
+          <span class="capability__num">01</span>
+          <h3>Sepsis Alerting</h3>
+          <p>Server-level detection agents monitor patient data using SIRS-based rules and advanced AI. Clinicians receive real-time mobile alerts with suggested interventions and one-tap actions.</p>
+        </div>
+        <div class="capability">
+          <span class="capability__num">02</span>
+          <h3>Order Tracking</h3>
+          <p>Consolidated view of active, pending, and completed orders with status timers, reminders, results, and configurable completion notifications.</p>
+        </div>
+        <div class="capability">
+          <span class="capability__num">03</span>
+          <h3>AI Chat</h3>
+          <p>Secure interaction with the clinical record via AI — request patient summaries, protocol guidance, actionable recommendations, or medication queries.</p>
+        </div>
+        <div class="capability">
+          <span class="capability__num">04</span>
+          <h3>Patient Lists & Summaries</h3>
+          <p>List views segmented by service line with encounter-level summaries including demographics, orders, diagnoses, results, and vitals.</p>
+        </div>
+        <div class="capability">
+          <span class="capability__num">05</span>
+          <h3>Sepsis Risk Indicator</h3>
+          <p>Continuously updated risk score derived from vital signs, labs, and clinical history — viewable on patient list views and detail screens.</p>
+        </div>
+        <div class="capability">
+          <span class="capability__num">06</span>
+          <h3>Clinical Surveillance</h3>
+          <p>Continuously monitoring intelligence layer that guides standardized screening, explains alert rationale, and equips clinicians with flexible next steps.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="pipeline" id="how-it-works">
+    <div class="container">
+      <p class="section-tag">How It Works</p>
+      <h2 class="section-title">From signal to action</h2>
+
+      <div class="pipeline__flow">
+        <div class="pipeline__step">
+          <div class="pipeline__icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          </div>
+          <h3>Signal Ingestion</h3>
+          <p>Multi-source clinical context</p>
+          <ul>
+            <li>Vitals &amp; trends</li>
+            <li>Labs &amp; trajectories</li>
+            <li>EHR medical history</li>
+            <li>Nurse observations</li>
+          </ul>
+        </div>
+        <div class="pipeline__arrow" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+        </div>
+        <div class="pipeline__step">
+          <div class="pipeline__icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/></svg>
+          </div>
+          <h3>MedBeacon AI Core</h3>
+          <p>Contextual intelligence</p>
+          <ul>
+            <li>Trend-based risk modeling</li>
+            <li>Pattern recognition</li>
+            <li>Noise suppression</li>
+            <li>Weighted clinical context</li>
+          </ul>
+        </div>
+        <div class="pipeline__arrow" aria-hidden="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+        </div>
+        <div class="pipeline__step">
+          <div class="pipeline__icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <h3>Guided Screening</h3>
+          <p>Actionable validation</p>
+          <ul>
+            <li>Personalized assessment</li>
+            <li>Confirm or suppress alerts</li>
+            <li>Clear escalation paths</li>
+            <li>Physician-directed next steps</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="pipeline__highlights">
+        <div class="pipeline__highlight">
+          <strong>Patient-Specific Precision</strong>
+          <p>Continuously balances objective EHR data with individualized subjective indicators like unusual irritability, clammy skin, or changes in mental status.</p>
+        </div>
+        <div class="pipeline__highlight">
+          <strong>Bidirectional Integration</strong>
+          <p>Uses Red Rover Health's RESTful API platform for seamless, real-time data sync with your EHR — including mobile orders and commands.</p>
+        </div>
+        <div class="pipeline__highlight">
+          <strong>Secure &amp; Compliant</strong>
+          <p>HIPAA- and SOC 2-compliant. Cloud-based infrastructure makes MedBeacon easy to implement, manage, and operate.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="about" id="about">
+    <div class="container">
+      <p class="section-tag">About MedBeacon</p>
+      <h2 class="section-title">Advanced disease management,<br>beginning with sepsis</h2>
+      <p class="section-desc">MedBeacon is a disease management technology company with sepsis as our first target. Designed to coexist with existing EHR systems, our platform is built by physician leaders, clinicians, health IT experts, and EHR consultants who bring decades of experience in clinical workflow optimization.</p>
+
+      <div class="team">
+        <div class="team__member">
+          <img src="images/steve.avif" alt="Steve McDonald" class="team__photo">
+          <h3>Steve McDonald</h3>
+          <span>CEO</span>
+          <p>30+ years leading healthcare growth at Cerner, MEDITECH, and Impact Advisors — modernizing care delivery through EHRs, digital solutions, and AI.</p>
+        </div>
+        <div class="team__member">
+          <img src="images/paula.avif" alt="Paula Jacobs" class="team__photo">
+          <h3>Paula Jacobs</h3>
+          <span>VP Innovation & Impact</span>
+          <p>30+ years improving care through data-driven processes. Pioneer who helped develop one of the first sepsis alerts at Methodist Le Bonheur Healthcare.</p>
+        </div>
+        <div class="team__member">
+          <img src="images/shawn.avif" alt="Shawn Bierman" class="team__photo">
+          <h3>Shawn Bierman</h3>
+          <span>CTO</span>
+          <p>25+ years in healthcare technology. Leads design and development of clinical applications with a builder's mindset for scalable, forward-thinking solutions.</p>
+        </div>
+        <div class="team__member">
+          <img src="images/david.avif" alt="David Deas" class="team__photo">
+          <h3>David Deas</h3>
+          <span>Chief Product Officer</span>
+          <p>Decades at Cerner advancing seamless EHR integration. Specializes in optimizing clinical workflows and reducing the burden of care delivery.</p>
+        </div>
+        <div class="team__member">
+          <img src="images/scott.avif" alt="Scott Smith" class="team__photo">
+          <h3>Scott Smith</h3>
+          <span>Founder, Board Member</span>
+          <p>Lifetime Fellow of ACHE with 30+ years across hospital leadership and health tech — advancing EHR-enabled strategies that improve outcomes.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section class="contact" id="contact">
+    <div class="container">
+      <div class="contact__inner">
+        <div class="contact__text">
+          <p class="section-tag">Get Started</p>
+          <h2 class="section-title">Ready to<br>save lives?</h2>
+          <p class="section-desc">Contact us today to learn how MedBeacon can transform sepsis detection and management at your facility.</p>
+          <p class="contact__email">info@medbeacon.ai</p>
+        </div>
+        <form class="contact__form" id="contactForm">
+          <div class="form__row">
+            <div class="form__field">
+              <label for="firstName">First name *</label>
+              <input type="text" id="firstName" name="firstName" required>
+            </div>
+            <div class="form__field">
+              <label for="lastName">Last name *</label>
+              <input type="text" id="lastName" name="lastName" required>
+            </div>
+          </div>
+          <div class="form__field">
+            <label for="email">Email *</label>
+            <input type="email" id="email" name="email" required>
+          </div>
+          <div class="form__field">
+            <label for="phone">Phone</label>
+            <input type="tel" id="phone" name="phone">
+          </div>
+          <div class="form__field">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="4"></textarea>
+          </div>
+          <button type="submit" class="btn btn--primary btn--full">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer__inner">
+      <div class="footer__brand">
+        <a href="#" class="nav__logo">
+          <img src="images/logo-dark.png" alt="MedBeacon" class="nav__logo-img nav__logo-img--sm">
+        </a>
+        <p>Transforming healthcare through AI-driven early disease detection, clinician-friendly workflows and better patient outcomes.</p>
+      </div>
+      <div class="footer__links">
+        <div>
+          <h4>Navigation</h4>
+          <a href="#solution">Solution</a>
+          <a href="#capabilities">Capabilities</a>
+          <a href="#how-it-works">How It Works</a>
+          <a href="#about">About</a>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <a href="mailto:info@medbeacon.ai">info@medbeacon.ai</a>
+          <a href="https://www.linkedin.com/company/medbeacon" target="_blank" rel="noopener">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+    <div class="container footer__bottom">
+      <p>&copy; 2026 MedBeacon. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
