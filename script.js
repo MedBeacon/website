@@ -56,10 +56,12 @@ document.getElementById('contactForm').addEventListener('submit', (e) => {
         btn.style.background = 'var(--accent)';
         form.reset();
       } else {
-        btn.textContent = 'Something went wrong';
+        console.error('Form error:', res.status, res.statusText);
+        btn.textContent = 'Something went wrong (' + res.status + ')';
       }
     })
-    .catch(() => {
+    .catch(err => {
+      console.error('Form error:', err);
       btn.textContent = 'Something went wrong';
     })
     .finally(() => {
