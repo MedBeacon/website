@@ -294,6 +294,13 @@ ul { list-style: none; }
   margin-bottom: 40px;
 }
 
+.hero__tagline {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 40px;
+}
+
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
@@ -318,39 +325,18 @@ ul { list-style: none; }
   border-radius: 50px;
 }
 
-/* Phone mockups */
-.hero__phones {
-  position: relative;
+/* Hero visual */
+.hero__visual {
   display: flex;
   justify-content: center;
-  align-items: flex-end;
+  align-items: center;
   margin-top: 48px;
-  height: 500px;
 }
 
-.hero__phone {
-  position: absolute;
-  overflow: hidden;
-}
-
-.hero__phone img {
-  display: block;
+.hero__diagram {
   width: 100%;
+  max-width: 500px;
   height: auto;
-}
-
-.hero__phone--back {
-  width: 260px;
-  right: 160px;
-  bottom: 20px;
-  z-index: 1;
-}
-
-.hero__phone--front {
-  width: 280px;
-  right: 0;
-  bottom: 0;
-  z-index: 2;
 }
 
 /* ---- Stats ---- */
@@ -930,22 +916,8 @@ ul { list-style: none; }
 
   .hero__ticker { gap: 10px; }
 
-  .hero__phones {
+  .hero__visual {
     margin-top: 0;
-    height: 640px;
-    justify-content: flex-end;
-  }
-
-  .hero__phone--back {
-    width: 300px;
-    right: 220px;
-    bottom: 40px;
-  }
-
-  .hero__phone--front {
-    width: 320px;
-    right: 0;
-    bottom: 0;
   }
 
   /* Solution */
@@ -1007,39 +979,19 @@ ul { list-style: none; }
   transform: translateY(0);
 }
 
-/* Phone entrance animations — on page load */
-.hero__phone {
+/* Hero diagram entrance animation */
+.hero__diagram {
   opacity: 0;
+  animation: diagramFadeIn 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
 }
 
-/* Patient list (back): slides up first */
-.hero__phone--back {
-  animation: phoneSlideUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
-}
-
-/* Patient detail (front): slides in over the list */
-.hero__phone--front {
-  animation: phoneSlideOver 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.0s forwards;
-}
-
-@keyframes phoneSlideUp {
+@keyframes diagramFadeIn {
   from {
     opacity: 0;
-    transform: translateY(120px);
+    transform: translateY(40px);
   }
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-@keyframes phoneSlideOver {
-  from {
-    opacity: 0;
-    transform: translate(80px, 40px);
-  }
-  to {
-    opacity: 1;
-    transform: translate(0, 0);
   }
 }
