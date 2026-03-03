@@ -31,7 +31,7 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.1 });
 
 document.querySelectorAll(
-  '.section-tag, .section-title, .section-desc, .stat, .need, .feature, .capability, .pipeline__step, .pipeline__highlight, .team__member, .comparison__table-wrap, .contact__text, .contact__form, .features__credibility'
+  '.section-tag, .section-title, .section-desc, .stat, .need, .feature, .capability, .team__member, .comparison__table-wrap, .contact__text, .contact__form, .features__credibility'
 ).forEach(el => {
   el.classList.add('fade-in');
   observer.observe(el);
