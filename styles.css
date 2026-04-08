@@ -279,9 +279,9 @@ ul { list-style: none; }
 }
 
 .hero__title {
-  font-size: clamp(2.75rem, 8vw, 5.5rem);
+  font-size: clamp(2rem, 5.5vw, 3.75rem);
   font-weight: 900;
-  line-height: 1.02;
+  line-height: 1.08;
   letter-spacing: -0.04em;
   margin-bottom: 24px;
 }
@@ -911,7 +911,7 @@ ul { list-style: none; }
   }
 
   .hero__title {
-    font-size: clamp(3.5rem, 6vw, 5.5rem);
+    font-size: clamp(2.5rem, 4.5vw, 3.75rem);
   }
 
   .hero__ticker { gap: 10px; }
