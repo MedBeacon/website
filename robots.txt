@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /prospect/
 
 Sitemap: https://medbeacon.ai/sitemap.xml
