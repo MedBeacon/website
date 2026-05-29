@@ -93,6 +93,10 @@
   .money .big{font-family:var(--serif);font-size:25px;font-weight:600;line-height:1}
   .money .big.dn{color:var(--vermilion)}.money .big.up{color:var(--teal)}
   .money .sub{font-size:11.5px;color:var(--ink-soft);margin-top:6px;line-height:1.5}
+  .pager{display:flex;align-items:center;gap:10px}
+  .pager .btn{padding:6px 11px;font-size:11px}
+  .pager .btn[disabled]{opacity:.35;cursor:default}
+  .pager .pginfo{font-family:var(--mono);font-size:12px;color:var(--ink-soft)}
   footer{margin-top:26px;font-size:12px;color:var(--ink-faint);line-height:1.6;border-top:1px solid var(--line);padding-top:16px}
   footer .fn{margin-bottom:7px}
   footer .fn b{color:var(--ink-soft);font-weight:600}
@@ -124,8 +128,8 @@
     <button class="btn" id="csv">Download CSV</button>
   </div>
   <div class="note"><b>EHR qualifier &mdash; live:</b> EHR vendor joined in from the ONC CHPL hospital&ndash;Promoting&nbsp;Interoperability linkage (latest attestation year). Use the <b>EHR vendor</b> filter to isolate <b>Oracle Health (Cerner)</b> &mdash; your Red Rover integration target. Coverage ~89% of reporting hospitals; the rest show as <b>Unknown</b> (typically psychiatric, children's, or non&ndash;PI attesters).</div>
-  <div class="note" style="background:var(--teal-soft);border-color:#b9d4d0"><b style="color:var(--teal)">Quality &amp; reimbursement &mdash; new:</b> Every row now carries the CMS <b>overall star rating</b> (1&ndash;5) and the hospital's FY2025 <b>Value-Based Purchasing payment adjustment</b> &mdash; the &plusmn;% CMS applies to base operating DRG payments. <b>Click any row</b> to expand the SEP-1 phase breakdown, the VBP Total Performance Score with domain scores, and an <b>estimated annual dollar impact</b>. A SEP-1 gap is the clinical story; the VBP penalty is the dollar story &mdash; together they make the buying case. Filter to <b>Penalized</b> hospitals to find facilities already losing reimbursement.</div>
-  <div class="meta-row"><div class="showing" id="showing"></div><div class="showing" id="sortby"></div></div>
+  <div class="note" style="background:var(--teal-soft);border-color:#b9d4d0"><b style="color:var(--teal)">Quality &amp; reimbursement &mdash; new:</b> Every row now carries the CMS <b>overall star rating</b> (1&ndash;5) and the hospital's FY2025 <b>Value-Based Purchasing payment adjustment</b> &mdash; the &plusmn;% CMS applies to base operating DRG payments. <b>Click any row</b> to expand the SEP-1 phase breakdown, the VBP Total Performance Score with domain scores, and an <b>estimated annual dollar impact</b>.</div>
+  <div class="meta-row"><div class="showing" id="showing"></div><div class="pager" id="pager"></div></div>
   <div class="tablewrap"><table><thead><tr id="head"></tr></thead><tbody id="rows"></tbody></table></div>
   <footer>
     <div class="fn"><b>Source.</b> CMS Provider Data Catalog &mdash; Timely &amp; Effective Care (<code>yv7e-xc69</code>) joined to Hospital General Information (<code>xubh-q36u</code>) on Facility ID.</div>
@@ -146,7 +150,7 @@ const DATA = JSON.parse('[{"id":"010001","name":"SOUTHEAST HEALTH MEDICAL CENTER
 const MANDATE = new Set(["NY","NJ","IL","OH","WI"]);
 const $ = id => document.getElementById(id);
 DATA.forEach(d=>{ d.mandate = MANDATE.has(d.state); });
-let sortKey="score", sortDir=1;
+let sortKey="score", sortDir=1, page=0; const PAGE=250;
 function priority(s){ if(s===null) return {k:"none",label:"No data"}; if(s<40) return {k:"high",label:"High"}; if(s<=60) return {k:"med",label:"Medium"}; return {k:"low",label:"Low"}; }
 function scoreColor(s){ if(s===null) return "var(--ink-faint)"; if(s<40) return "var(--vermilion)"; if(s<=60) return "var(--amber)"; return "var(--teal)"; }
 function esc(s){return (""+(s==null?"":s)).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
@@ -154,6 +158,7 @@ function shortOwn(o){return (o||"").replace(/Voluntary non-profit - /i,"Nonprofi
 function ehrKey(v){ if(!v) return "unk"; if(/Epic/i.test(v)) return "epic"; if(/Oracle|Cerner/i.test(v)) return "oracle"; if(/MEDITECH/i.test(v)) return "meditech"; if(/Altera|Allscripts|Paragon/i.test(v)) return "altera"; if(/TruBridge|CPSI/i.test(v)) return "trubridge"; if(/MEDHOST/i.test(v)) return "medhost"; if(/athena/i.test(v)) return "athena"; return "other"; }
 function uniqSorted(key){ return [...new Set(DATA.map(d=>d[key]).filter(Boolean))].sort(); }
 function ph(v){ return v===null||v===undefined ? "&mdash;" : v.toFixed(0); }
+function go(){ page=0; render(); }
 function ratingVal(r){ const n=parseInt(r,10); return isNaN(n)?null:n; }
 function starHTML(r){ const n=ratingVal(r); if(n===null) return '<span class="star unrated">Not rated</span>';
   let s='<span class="star">'; for(let i=1;i<=5;i++) s+=`<span class="${i<=n?'on':'off'}">★</span>`; return s+`<span class="rn">${n}</span></span>`; }
@@ -208,14 +213,15 @@ function buildFilters(){
   uniqSorted("own").forEach(s=>$("own").add(new Option(s,s)));
   uniqSorted("ehr").forEach(s=>$("ehr").add(new Option(s,s)));
   $("ehr").add(new Option("Unknown","__unknown__"));
-  ["q","state","type","own","ehr","star","vbpf","erOnly","repOnly","mandOnly"].forEach(id=>{$(id).addEventListener("input",render);$(id).addEventListener("change",render);});
-  $("thr").addEventListener("input",()=>{$("thrOut").textContent=$("thr").value;render();});
-  $("reset").addEventListener("click",()=>{$("q").value="";$("state").value="";$("type").value="";$("own").value="";$("ehr").value="";$("star").value="";$("vbpf").value="";$("thr").value=100;$("thrOut").textContent="100";$("erOnly").checked=false;$("repOnly").checked=true;$("mandOnly").checked=false;render();});
+  ["q","state","type","own","ehr","star","vbpf","erOnly","repOnly","mandOnly"].forEach(id=>{$(id).addEventListener("input",go);$(id).addEventListener("change",go);});
+  $("thr").addEventListener("input",()=>{$("thrOut").textContent=$("thr").value;go();});
+  $("reset").addEventListener("click",()=>{$("q").value="";$("state").value="";$("type").value="";$("own").value="";$("ehr").value="";$("star").value="";$("vbpf").value="";$("thr").value=100;$("thrOut").textContent="100";$("erOnly").checked=false;$("repOnly").checked=true;$("mandOnly").checked=false;go();});
   $("csv").addEventListener("click",exportCSV);
   const cols=[["exp",""],["rank","#"],["name","Hospital"],["state","St"],["ehr","EHR"],["score","SEP-1"],["rating","Star"],["vbp","VBP"],["priority","Priority"]];
-  $("head").innerHTML=cols.map(c=>`<th data-k="${c[0]}">${c[1]}${c[0]==="exp"||c[0]==="rank"?"":' <span class="arr">\u25be</span>'}</th>`).join("");
-  $("head").querySelectorAll("th").forEach(th=>{const k=th.dataset.k;if(k==="exp"||k==="rank")return;th.addEventListener("click",()=>{if(sortKey===k)sortDir*=-1;else{sortKey=k;sortDir=1;}render();});});
-  $("rows").addEventListener("click",e=>{const tr=e.target.closest("tr.main");if(!tr)return;const det=tr.nextElementSibling;if(det&&det.classList.contains("detail")){const open=det.classList.toggle("hidden")===false;tr.classList.toggle("open",open);const c=tr.querySelector(".exp");if(c)c.textContent=open?"\u25be":"\u25b8";}});
+  $("head").innerHTML=cols.map(c=>`<th data-k="${c[0]}">${c[1]}${c[0]==="exp"||c[0]==="rank"?"":' <span class="arr">▾</span>'}</th>`).join("");
+  $("head").querySelectorAll("th").forEach(th=>{const k=th.dataset.k;if(k==="exp"||k==="rank")return;th.addEventListener("click",()=>{if(sortKey===k)sortDir*=-1;else{sortKey=k;sortDir=1;}go();});});
+  $("rows").addEventListener("click",e=>{const tr=e.target.closest("tr.main");if(!tr)return;const det=tr.nextElementSibling;if(det&&det.classList.contains("detail")){const open=det.classList.toggle("hidden")===false;tr.classList.toggle("open",open);const c=tr.querySelector(".exp");if(c)c.textContent=open?"▾":"▸";}});
+  $("pager").addEventListener("click",e=>{const b=e.target.closest("button[data-pg]");if(!b)return;page+=(b.dataset.pg==="next"?1:-1);render();window.scrollTo({top:0,behavior:"smooth"});});
 }
 function currentFilter(){
   const q=$("q").value.trim().toLowerCase(),st=$("state").value,ty=$("type").value,ow=$("own").value,eh=$("ehr").value;
@@ -243,13 +249,16 @@ function currentFilter(){
   return rows;
 }
 function render(){
-  const rows=currentFilter(),cap=800,view=rows.slice(0,cap);
+  const rows=currentFilter();
+  const pages=Math.max(1,Math.ceil(rows.length/PAGE));
+  page=Math.min(Math.max(0,page),pages-1);
+  const startI=page*PAGE, view=rows.slice(startI,startI+PAGE);
   $("rows").innerHTML=view.map((d,i)=>{
     const pr=priority(d.score),col=scoreColor(d.score);
     const sc=d.score===null?"&mdash;":d.score.toFixed(0)+"%";
     return `<tr class="main">
       <td class="exp">▸</td>
-      <td class="rank">${i+1}</td>
+      <td class="rank">${startI+i+1}</td>
       <td><div class="hosp">${esc(d.name)}<span class="loc">${esc(d.city)}${d.county?", "+esc(d.county):""}${d.mandate?' &middot; <b style="color:var(--ink-soft)">Mandate</b>':""}</span></div></td>
       <td class="num">${esc(d.state)}</td>
       <td>${d.ehr?`<span class="ehr ehr-${ehrKey(d.ehr)}">${esc(d.ehr)}</span>`:'<span class="ehr ehr-unk">Unknown</span>'}</td>
@@ -259,8 +268,9 @@ function render(){
       <td><span class="pill p-${pr.k}">${pr.label}</span></td>
     </tr>
     <tr class="detail hidden"><td colspan="9">${detailPanel(d)}</td></tr>`;}).join("");
-  $("showing").innerHTML=`Showing <b>${view.length.toLocaleString()}</b> of <b>${rows.length.toLocaleString()}</b> hospitals`+(rows.length>cap?` (refine filters to see the rest)`:``);
-  $("sortby").textContent=`Sorted by ${sortKey} \u00b7 ${sortDir>0?"asc":"desc"}`;
+  const endI=startI+view.length;
+  $("showing").innerHTML=`Showing <b>${rows.length?(startI+1).toLocaleString():0}\u2013${endI.toLocaleString()}</b> of <b>${rows.length.toLocaleString()}</b> \u00b7 sorted by ${sortKey} ${sortDir>0?"\u2191":"\u2193"}`;
+  $("pager").innerHTML = pages>1 ? `<button class="btn ghost" data-pg="prev"${page===0?" disabled":""}>\u2039 Prev</button><span class="pginfo">Page ${page+1} / ${pages}</span><button class="btn ghost" data-pg="next"${page>=pages-1?" disabled":""}>Next \u203a</button>` : "";
   $("head").querySelectorAll("th").forEach(th=>th.classList.toggle("sorted",th.dataset.k===sortKey));
 }
 function exportCSV(){
