@@ -38,10 +38,35 @@ document.querySelectorAll(
 });
 
 // ---- Contact form ----
+// Bots fill and submit near-instantly; humans take seconds to type.
+const FORM_MIN_FILL_MS = 3000;
+const formLoadedAt = Date.now();
+
+// Digits only, trailing 10 significant — matches regardless of formatting or +1 prefix.
+const BLOCKED_PHONES = ['6198221960'];
+
+const isBlockedPhone = (value) => {
+  const digits = (value || '').replace(/\D/g, '');
+  return digits.length >= 10 && BLOCKED_PHONES.includes(digits.slice(-10));
+};
+
 document.getElementById('contactForm').addEventListener('submit', (e) => {
   e.preventDefault();
   const form = e.target;
   const btn = form.querySelector('button[type="submit"]');
+
+  const tooFast = Date.now() - formLoadedAt < FORM_MIN_FILL_MS;
+  if (tooFast || isBlockedPhone(form.phone.value)) {
+    btn.textContent = 'Message Sent!';
+    btn.style.background = 'var(--accent)';
+    form.reset();
+    setTimeout(() => {
+      btn.textContent = 'Send Message';
+      btn.style.background = '';
+    }, 3000);
+    return;
+  }
+
   btn.textContent = 'Sending…';
   btn.disabled = true;
 
