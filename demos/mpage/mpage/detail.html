@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>MedBeacon - Alert Detail</title>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font:13px/1.45 "Segoe UI","SF Pro Text",-apple-system,Tahoma,sans-serif;color:#1c1c1e;background:#f2f2f7}
+.wrap{max-width:1180px;margin:0 auto;padding:14px 16px 40px}
+
+.topbar{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.back{color:#0a63c9;font-size:13px;text-decoration:none;cursor:pointer;white-space:nowrap}
+.back:hover{text-decoration:underline}
+.topbar h1{font-size:19px;font-weight:700;margin:0;flex:1;min-width:0}
+.topbar .who{font-size:12px;color:#6c7278}
+.btn{font:13px inherit;padding:6px 14px;border-radius:7px;border:1px solid #c7c9cc;background:#fff;color:#1c1c1e;cursor:pointer}
+.btn:hover{background:#f0f4f8;border-color:#0a63c9}
+.btn.primary{background:#0a63c9;border-color:#0a63c9;color:#fff}
+.btn.primary:hover{background:#0951a5}
+.btn:disabled{background:#e9eaec;border-color:#dcdee0;color:#a0a4a8;cursor:default}
+
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+@media (max-width:1000px){.cols{grid-template-columns:1fr}}
+.card{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 2px rgba(0,0,0,.07);margin-bottom:14px}
+.card h2{font-size:15px;font-weight:700;margin:0 0 12px}
+.sub{font-size:12px;color:#6c7278}
+.div{height:1px;background:#e8e9eb;margin:13px 0}
+
+/* header */
+.hdr .row1{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.hdr .row1 h2{margin:0;font-size:18px}
+.dot{width:11px;height:11px;border-radius:50%;background:#e02020;margin-left:auto}
+.badges{display:flex;flex-wrap:wrap;gap:7px}
+.bdg{padding:3px 11px;border-radius:20px;font-size:11.5px;font-weight:600;border:1px solid transparent}
+.bdg.fill{color:#fff}
+.bdg.out{border-color:#c7c9cc;color:#3a3f44;background:#fff;font-weight:500}
+.bdg.soft{background:#f0f1f3;border-color:#e2e4e6;font-weight:500;color:#5b6167}
+
+/* score sections */
+.scorehead{display:flex;align-items:baseline;gap:8px}
+.scorehead .t{font-size:13.5px;font-weight:700}
+.scorehead .v{margin-left:auto;font-size:14px;font-weight:700}
+.interp{font-size:12px;color:#6c7278;margin:2px 0 9px}
+.crit{display:flex;align-items:center;gap:8px;padding:4px 0;font-size:12.5px}
+.mark{width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;flex:0 0 17px}
+.mark.y{background:#e02020}.mark.n{background:#c2c6ca}
+.sofagrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.sofacell{background:#f6f7f9;border-radius:8px;padding:8px;text-align:center}
+.sofacell .l{font-size:10.5px;color:#6c7278;display:block}
+.sofacell .n{font-size:16px;font-weight:700}
+
+/* criteria */
+.flags{display:flex;gap:10px;margin-bottom:10px}
+.flag{flex:1;background:#f6f7f9;border-radius:8px;padding:9px;text-align:center}
+.flag .l{font-size:11px;color:#6c7278;display:block;margin-bottom:3px}
+.flag .s{font-size:12.5px;font-weight:700}
+.flag .s.y{color:#e02020}.flag .s.n{color:#6c7278}
+.detail{display:flex;gap:7px;align-items:flex-start;font-size:12px;color:#4a5057;padding:3px 0}
+.detail .w{color:#f08000;flex:0 0 auto;font-weight:700}
+
+.action{font-size:13px;font-weight:600}
+.ai{display:flex;gap:10px;align-items:flex-start;background:#eef4fd;border:1px solid #d3e2f7;border-radius:10px;padding:11px 13px;font-size:12.5px;color:#3a4a5c}
+.kv{display:flex;font-size:12.5px;padding:3px 0}
+.kv .k{color:#6c7278}.kv .v{margin-left:auto;font-weight:600}
+
+/* interventions */
+.iv{display:flex;gap:11px;padding:11px 0;border-bottom:1px solid #eef0f2}
+.iv:last-child{border-bottom:none}
+.ivicon{width:32px;height:32px;border-radius:8px;flex:0 0 32px;display:flex;align-items:center;justify-content:center}
+.iv .body{flex:1;min-width:0}
+.iv .t{font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px}
+.iv .d{font-size:12.5px;color:#3a3f44}
+.iv .r{font-size:11.5px;color:#6c7278;margin-top:2px}
+.pri{font-size:9.5px;font-weight:800;letter-spacing:.4px;padding:2px 7px;border-radius:4px;color:#fff}
+.pri.critical{background:#e02020}.pri.high{background:#f08000}.pri.moderate{background:#c9a227}
+
+/* order bundle */
+.tiers{display:flex;gap:8px;margin-bottom:12px}
+.tier{flex:1;border:1px solid #d5d8db;border-radius:9px;padding:9px 11px;cursor:pointer;background:#fff}
+.tier:hover{border-color:#0a63c9}
+.tier.on{border-color:#0a63c9;background:#eef4fd;box-shadow:0 0 0 1px #0a63c9 inset}
+.tier .n{font-size:12.5px;font-weight:700}
+.tier .c{font-size:11px;color:#6c7278}
+.cat{font-size:11px;font-weight:800;color:#6c7278;letter-spacing:.5px;text-transform:uppercase;margin:14px 0 5px}
+.oi{display:flex;gap:10px;padding:9px;border:1px solid #e6e8ea;border-radius:9px;margin-bottom:7px;background:#fff}
+.oi.sel{border-color:#0a63c9;background:#f7fbff}
+.oi input[type=checkbox]{margin-top:2px}
+.oi .body{flex:1;min-width:0}
+.oi .n{font-size:12.5px;font-weight:600}
+.oi .m{font-size:11.5px;color:#6c7278}
+.fields{display:flex;flex-wrap:wrap;gap:8px;margin-top:7px}
+.fld{display:flex;flex-direction:column;gap:2px}
+.fld label{font-size:10.5px;color:#6c7278}
+.fld input,.fld select{font:12px inherit;padding:3px 6px;border:1px solid #c7c9cc;border-radius:5px;background:#fff;min-width:118px}
+.fld input.need{border-color:#f08000;background:#fffaf2}
+.fld .req{color:#f08000;font-weight:700}
+.bar{display:flex;align-items:center;gap:12px;margin-top:14px;padding-top:13px;border-top:1px solid #e8e9eb}
+.bar .msg{font-size:12px;color:#6c7278;flex:1}
+
+/* tracking */
+.tr{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid #eef0f2}
+.tr:last-child{border-bottom:none}
+.tr .body{flex:1;min-width:0}
+.tr .n{font-size:12.5px;font-weight:600}
+.tr .m{font-size:11.5px;color:#6c7278}
+.st{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap}
+.st.orange{background:#fdf0dd;color:#96590a}
+.st.green{background:#e3f5e6;color:#1c6b2a}
+.st.red{background:#fdeaea;color:#a51f1f}
+.progress{height:6px;border-radius:3px;background:#eceef0;overflow:hidden;margin:4px 0 12px}
+.progress i{display:block;height:100%;background:#0a63c9;width:0;transition:width .3s}
+.hint{background:#fff8e8;border:1px solid #f0dfb8;border-radius:9px;padding:11px 13px;font-size:12.5px;color:#6b551d;margin-top:12px}
+.empty{font-size:12.5px;color:#8a8f94;padding:8px 0}
+</style>
+</head>
+<body>
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="s-drop" viewBox="0 0 24 24"><path d="M12 2s6.5 7.6 6.5 12a6.5 6.5 0 11-13 0C5.5 9.6 12 2 12 2z" fill="currentColor"/></symbol>
+  <symbol id="s-pills" viewBox="0 0 24 24"><rect x="2" y="9" width="14" height="7" rx="3.5" transform="rotate(-35 9 12.5)" fill="currentColor"/><circle cx="17" cy="17" r="5" fill="currentColor" opacity=".65"/></symbol>
+  <symbol id="s-tube" viewBox="0 0 24 24"><path d="M8 2h6v14a3 3 0 01-6 0z" fill="currentColor"/><path d="M6.5 2h9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+  <symbol id="s-heart" viewBox="0 0 24 24"><path d="M12 21s-8-5.2-8-10.6A4.6 4.6 0 0112 7a4.6 4.6 0 018 3.4C20 15.8 12 21 12 21z" fill="currentColor"/></symbol>
+  <symbol id="s-speed" viewBox="0 0 24 24"><path d="M12 4a9 9 0 019 9h-3a6 6 0 10-12 0H3a9 9 0 019-9z" fill="currentColor"/><path d="M12 13l4.5-3.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="s-mag" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2.6"/><path d="M15 15l5 5" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"/></symbol>
+  <symbol id="s-case" viewBox="0 0 24 24"><rect x="2.5" y="7" width="19" height="13" rx="2.5" fill="currentColor"/><path d="M9 7V5.5A1.5 1.5 0 0110.5 4h3A1.5 1.5 0 0115 5.5V7" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 11v5M9.5 13.5h5" stroke="#fff" stroke-width="2" stroke-linecap="round"/></symbol>
+</svg>
+
+<div class="wrap">
+
+  <div class="topbar">
+    <span class="back" id="back">&#9664; Back to chart</span>
+    <h1 id="ptName">Alert Details</h1>
+    <span class="who" id="ptMeta"></span>
+    <button class="btn" id="ack">Acknowledge</button>
+  </div>
+
+  <div class="card hdr" id="hdrCard"></div>
+
+  <div class="cols">
+    <div>
+      <div class="card" id="scoresCard"></div>
+      <div class="card" id="critCard"></div>
+      <div class="card" id="ratCard"></div>
+      <div class="card"><div class="ai"><span>&#129504;</span><span>This is AI suggested, will not be stored in EMR</span></div></div>
+      <div class="card" id="confCard"></div>
+      <div class="card" id="timeCard"></div>
+    </div>
+    <div>
+      <div class="card" id="ivCard"></div>
+      <div class="card" id="bundleCard"></div>
+      <div class="card" id="trackCard"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===================== data ===================== */
+var PT={
+'100254871':{name:'HARRINGTON, MARGARET E',meta:'78 y · F · MC 5W / 5W12 A · MRN 100254871',
+ risk:92,prob:'87%',level:'CRITICAL',color:'#e02020',priority:'Immediate',conf:'High',review:true,
+ confWhy:'Vitals and labs agree, all drawn within the last 90 minutes. No conflicting documentation and no recent surgery to confound the SIRS criteria.',
+ qsofa:{s:3,max:3,i:'High risk of poor outcome',items:[['RR ≥ 22',1],['Altered Mentation',1],['SBP ≤ 100',1]]},
+ sirs:{s:4,max:4,pos:true,items:[['Temperature Abnormal',1],['HR > 90',1],['RR > 20 / PaCO₂ < 32',1],['WBC Abnormal',1]]},
+ sofa:{s:7,max:24,i:'Organ dysfunction present, 3 points above baseline',
+   cells:[['Respiratory',2],['Coagulation',0],['Liver',1],['Cardiovascular',2],['CNS',1],['Renal',1]]},
+ crit:{s3:true,shock:false,now:true,details:[
+   'Lactic acid 3.1 mmol/L, above the 2.0 threshold, drawn 13:42',
+   'MAP 62 mmHg sustained below 65 for 45 minutes',
+   'SOFA increased by 3 points from the admission baseline of 4',
+   'Temperature 38.9 °C with HR 118 and RR 24 at 14:05']},
+ rationale:'Sustained tachycardia and tachypnea since 10:00 with a new fever spike at 14:05, on a background of community-acquired pneumonia treated since admission. Lactate has risen from 1.8 to 3.1 over four hours while MAP has drifted down, which is a perfusion pattern rather than fever alone. All four SIRS criteria and all three qSOFA criteria are met.',
+ action:'Draw repeat lactate within 2 hours and reassess antibiotic coverage now. Escalate to ICU consult if MAP stays below 65 after fluid challenge.',
+ created:'08/24/2026 14:28',ms:412,source:'MedBeacon Sepsis Model v2.4',
+ tier:'severe',
+ iv:[['drop','Fluids','30 mL/kg crystalloid - hypotensive','critical','BP 92/54 - immediate resuscitation needed'],
+     ['pills','Antibiotics','Broad-spectrum within 1 hour','critical','Golden hour: antibiotics within 60min reduces mortality by 7.6%'],
+     ['tube','Cultures','Obtain before antibiotics','high','WBC 16.8 - identify pathogen before treatment'],
+     ['speed','Lactate','Monitor q2-4h','high','Current 3.1 mmol/L - track treatment response'],
+     ['mag','Source','CT + cultures','moderate','Identify and control infection source for optimal outcomes']]},
+
+'100318844':{name:'OKONKWO, DANIEL J',meta:'64 y · M · MC ICU / ICU04 · MRN 100318844',
+ risk:84,prob:'79%',level:'CRITICAL',color:'#e02020',priority:'Immediate',conf:'High',review:false,
+ confWhy:'Consistent signal across two independent vitals sets and a same-morning CBC.',
+ qsofa:{s:2,max:3,i:'Elevated risk of poor outcome',items:[['RR ≥ 22',1],['Altered Mentation',0],['SBP ≤ 100',1]]},
+ sirs:{s:3,max:4,pos:true,items:[['Temperature Abnormal',1],['HR > 90',1],['RR > 20 / PaCO₂ < 32',1],['WBC Abnormal',1]]},
+ sofa:{s:6,max:24,i:'Organ dysfunction present',
+   cells:[['Respiratory',2],['Coagulation',1],['Liver',0],['Cardiovascular',2],['CNS',0],['Renal',1]]},
+ crit:{s3:true,shock:true,now:true,details:[
+   'SBP 88 mmHg despite 1.5 L crystalloid over 3 hours',
+   'WBC 19.2 K/uL with left shift',
+   'Temperature 39.1 °C at 14:00']},
+ rationale:'Post-operative day 2 with a rising white count and a new fever. Hypotension has not corrected with volume, which meets septic shock criteria pending a repeat lactate.',
+ action:'Start vasopressors if MAP remains below 65 after the current bolus. Repeat lactate now.',
+ created:'08/24/2026 14:22',ms:388,source:'MedBeacon Sepsis Model v2.4',
+ tier:'septic_shock',
+ iv:[['drop','Fluids','30 mL/kg crystalloid - hypotensive','critical','BP 88/52 - immediate resuscitation needed'],
+     ['pills','Antibiotics','Broad-spectrum within 1 hour','critical','Golden hour: antibiotics within 60min reduces mortality by 7.6%'],
+     ['heart','Pressors','Start norepinephrine','critical','MAP 64 mmHg - target >65 for organ perfusion'],
+     ['tube','Cultures','Obtain before antibiotics','high','WBC 19.2 - identify pathogen before treatment'],
+     ['case','ICU','Intensive monitoring','critical','Hemodynamic instability requires continuous monitoring']]},
+
+'100290117':{name:'VASQUEZ, ROSA M',meta:'55 y · F · MC 6E / 6E21 B · MRN 100290117',
+ risk:67,prob:'58%',level:'HIGH',color:'#f08000',priority:'Urgent',conf:'Moderate',review:true,
+ confWhy:'Renal signal is strong but the infectious signal is weaker. Last vitals are 4 hours old.',
+ qsofa:{s:1,max:3,i:'Low risk by qSOFA alone',items:[['RR ≥ 22',0],['Altered Mentation',0],['SBP ≤ 100',1]]},
+ sirs:{s:2,max:4,pos:true,items:[['Temperature Abnormal',0],['HR > 90',1],['RR > 20 / PaCO₂ < 32',0],['WBC Abnormal',1]]},
+ sofa:{s:4,max:24,i:'Mild organ dysfunction, renal predominant',
+   cells:[['Respiratory',0],['Coagulation',0],['Liver',0],['Cardiovascular',1],['CNS',0],['Renal',3]]},
+ crit:{s3:false,shock:false,now:false,details:[
+   'Creatinine 1.9 mg/dL, up from 1.3 on admission',
+   'Urine output 0.4 mL/kg/h over the last 6 hours']},
+ rationale:'Worsening renal function with borderline perfusion. Infection is possible but not established, so this reads closer to acute kidney injury than to sepsis.',
+ action:'Send a lactate and urinalysis. Hold nephrotoxic agents and reassess in 4 hours.',
+ created:'08/24/2026 13:55',ms:401,source:'MedBeacon Sepsis Model v2.4',
+ tier:'suspected',
+ iv:[['drop','Fluids','30 mL/kg crystalloid prophylaxis','high','Prophylactic fluid loading per sepsis protocol'],
+     ['tube','Cultures','Obtain before antibiotics','high','WBC 12.4 - identify pathogen before treatment'],
+     ['speed','Lactate','Monitor q2-4h','high','Baseline not yet drawn - establish trend'],
+     ['mag','Source','CT + cultures','moderate','Identify and control infection source for optimal outcomes']]}
+};
+var FALLBACK={name:'Patient',meta:'',risk:0,prob:'-',level:'LOW',color:'#4a8f3c',priority:'Routine',conf:'Low',review:false,
+ confWhy:'Not enough recent data to score confidently.',
+ qsofa:{s:0,max:3,i:'Low risk',items:[['RR ≥ 22',0],['Altered Mentation',0],['SBP ≤ 100',0]]},
+ sirs:{s:0,max:4,pos:false,items:[['Temperature Abnormal',0],['HR > 90',0],['RR > 20 / PaCO₂ < 32',0],['WBC Abnormal',0]]},
+ sofa:{s:0,max:24,i:'No organ dysfunction',cells:[['Respiratory',0],['Coagulation',0],['Liver',0],['Cardiovascular',0],['CNS',0],['Renal',0]]},
+ crit:{s3:false,shock:false,now:false,details:['No criteria currently met']},
+ rationale:'No active sepsis signal.',action:'Continue routine monitoring.',
+ created:'08/24/2026 12:00',ms:360,source:'MedBeacon Sepsis Model v2.4',tier:'suspected',
+ iv:[['mag','Source','Monitoring only','moderate','No intervention indicated at this score']]};
+
+/* order bundles, shaped like the app's order-bundle config (tier -> meds + non_meds) */
+var BUNDLES={
+ suspected:{tier:1,name:'Suspected Sepsis',items:[
+   ['Medications','Ceftriaxone','third-generation cephalosporin',[['Dose','1 g',0],['Route','IV',0],['Frequency','q24h',0]]],
+   ['Laboratory','Blood Culture x2','General Lab',[['Collection Time','',1],['Priority','STAT',0]]],
+   ['Laboratory','Lactic Acid','General Lab',[['Priority','STAT',0]]],
+   ['Laboratory','CBC with Differential','General Lab',[['Priority','Routine',0]]],
+   ['Nursing','Vital Signs q4h','Nursing Order',[['Duration','24 hours',0]]]]},
+ severe:{tier:2,name:'Severe Sepsis',items:[
+   ['Medications','Vancomycin','glycopeptide antibiotics',[['Dose','',1],['Route','IV',0],['Frequency','q12h',0]]],
+   ['Medications','Piperacillin-Tazobactam','beta-lactam combination',[['Dose','4.5 g',0],['Route','IV',0],['Frequency','q6h',0]]],
+   ['Medications','Lactated Ringers','crystalloid',[['Volume (30 mL/kg)','',1],['Rate','Bolus',0]]],
+   ['Laboratory','Blood Culture x2','General Lab',[['Collection Time','',1],['Priority','STAT',0]]],
+   ['Laboratory','Lactic Acid, repeat in 2h','General Lab',[['Priority','STAT',0]]],
+   ['Laboratory','Comprehensive Metabolic Panel','General Lab',[['Priority','STAT',0]]],
+   ['Radiology','Chest X-ray, Portable','Diagnostic Imaging',[['Reason for Exam','',1]]],
+   ['Nursing','Vital Signs q1h','Nursing Order',[['Duration','12 hours',0]]],
+   ['Nursing','Strict Intake and Output','Nursing Order',[]]]},
+ septic_shock:{tier:3,name:'Septic Shock',items:[
+   ['Medications','Vancomycin','glycopeptide antibiotics',[['Dose','',1],['Route','IV',0],['Frequency','q12h',0]]],
+   ['Medications','Piperacillin-Tazobactam','beta-lactam combination',[['Dose','4.5 g',0],['Route','IV',0],['Frequency','q6h',0]]],
+   ['Medications','Norepinephrine','vasopressor',[['Starting Rate (mcg/min)','',1],['Titrate to MAP','65 mmHg',0]]],
+   ['Medications','Lactated Ringers','crystalloid',[['Volume (30 mL/kg)','',1],['Rate','Bolus',0]]],
+   ['Laboratory','Blood Culture x2','General Lab',[['Collection Time','',1],['Priority','STAT',0]]],
+   ['Laboratory','Lactic Acid, repeat q2h','General Lab',[['Priority','STAT',0]]],
+   ['Laboratory','Arterial Blood Gas','General Lab',[['Priority','STAT',0]]],
+   ['Radiology','Chest X-ray, Portable','Diagnostic Imaging',[['Reason for Exam','',1]]],
+   ['Nursing','Continuous Cardiac Monitoring','Nursing Order',[]],
+   ['Nursing','Strict Intake and Output','Nursing Order',[]]]}
+};
+var TIER_ORDER=['suspected','severe','septic_shock'];
+
+/* ===================== render ===================== */
+var mrn=(location.search.match(/mrn=(\d+)/)||[])[1]||'';
+var d=PT[mrn]||FALLBACK;
+var curTier=d.tier, selected={}, fieldVals={}, proposed=[];
+
+function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+document.getElementById('ptName').textContent=d.name;
+document.getElementById('ptMeta').textContent=d.meta;
+
+document.getElementById('hdrCard').innerHTML=
+ '<div class="row1"><svg width="22" height="22" style="color:'+d.color+'"><use href="#s-heart"/></svg>'+
+ '<h2>Sepsis Alert</h2><span class="dot" style="background:'+d.color+'"></span></div>'+
+ '<div class="badges" style="margin-bottom:7px">'+
+   '<span class="bdg fill" style="background:'+d.color+'">'+d.level+'</span>'+
+   '<span class="bdg fill" style="background:'+d.color+'">Risk: '+d.risk+'</span>'+
+   '<span class="bdg out">'+d.priority+'</span></div>'+
+ '<div class="badges"><span class="bdg out">Probability: '+d.prob+'</span>'+
+   '<span class="bdg out">Confidence: '+d.conf+'</span>'+
+   (d.review?'<span class="bdg out">Manual second review recommended</span>':'')+'</div>';
+
+function critRow(label,met){
+  return '<div class="crit"><span class="mark '+(met?'y':'n')+'">'+(met?'✓':'–')+'</span>'+esc(label)+'</div>';
+}
+document.getElementById('scoresCard').innerHTML='<h2>Clinical Scores</h2>'+
+ '<div class="scorehead"><span class="t">qSOFA</span><span class="v" style="color:'+d.color+'">'+d.qsofa.s+' / '+d.qsofa.max+'</span></div>'+
+ '<div class="interp">'+esc(d.qsofa.i)+'</div>'+d.qsofa.items.map(function(i){return critRow(i[0],i[1])}).join('')+
+ '<div class="div"></div>'+
+ '<div class="scorehead"><span class="t">SIRS</span><span class="v" style="color:'+d.color+'">'+d.sirs.s+' / '+d.sirs.max+'</span></div>'+
+ '<div class="interp">'+(d.sirs.pos?'SIRS Positive':'SIRS Negative')+'</div>'+
+ d.sirs.items.map(function(i){return critRow(i[0],i[1])}).join('')+
+ '<div class="div"></div>'+
+ '<div class="scorehead"><span class="t">SOFA</span><span class="v" style="color:'+d.color+'">'+d.sofa.s+' / '+d.sofa.max+'</span></div>'+
+ '<div class="interp">'+esc(d.sofa.i)+'</div>'+
+ '<div class="sofagrid">'+d.sofa.cells.map(function(c){
+   return '<div class="sofacell"><span class="l">'+c[0]+'</span><span class="n" style="color:'+(c[1]>0?d.color:'#8a8f94')+'">'+c[1]+'</span></div>';}).join('')+'</div>';
+
+function flag(l,v){return '<div class="flag"><span class="l">'+l+'</span><span class="s '+(v?'y':'n')+'">'+(v?'Met':'Not met')+'</span></div>';}
+document.getElementById('critCard').innerHTML='<h2>Sepsis Criteria</h2>'+
+ '<div class="flags">'+flag('Sepsis-3',d.crit.s3)+flag('Septic Shock',d.crit.shock)+flag('Immediate Action',d.crit.now)+'</div>'+
+ d.crit.details.map(function(x){return '<div class="detail"><span class="w">!</span><span>'+esc(x)+'</span></div>';}).join('');
+
+document.getElementById('ratCard').innerHTML='<h2>Clinical Rationale</h2>'+
+ '<div class="sub" style="font-size:12.5px;color:#4a5057">'+esc(d.rationale)+'</div><div class="div"></div>'+
+ '<h2 style="margin-bottom:6px">Action Required</h2>'+
+ '<div class="action" style="color:'+d.color+'">'+esc(d.action)+'</div>';
+
+document.getElementById('confCard').innerHTML='<h2>Confidence Assessment</h2>'+
+ '<div class="kv"><span class="k">Level</span><span class="v">'+d.conf+'</span></div>'+
+ '<div class="sub" style="margin-top:6px">'+esc(d.confWhy)+'</div>';
+
+document.getElementById('timeCard').innerHTML='<h2>Timeline</h2>'+
+ '<div class="kv"><span class="k">Alert Created</span><span class="v">'+d.created+'</span></div>'+
+ '<div class="kv"><span class="k">Processing Time</span><span class="v">'+d.ms.toFixed(1)+' ms</span></div>'+
+ '<div class="kv"><span class="k">Source</span><span class="v">'+d.source+'</span></div>';
+
+var IVBG={critical:'#fdeaea',high:'#fdf3e6',moderate:'#fbf7e4'};
+var IVFG={critical:'#e02020',high:'#f08000',moderate:'#c9a227'};
+document.getElementById('ivCard').innerHTML='<h2>Suggested Interventions</h2>'+
+ d.iv.map(function(i){
+   return '<div class="iv"><div class="ivicon" style="background:'+IVBG[i[3]]+';color:'+IVFG[i[3]]+'">'+
+     '<svg width="18" height="18"><use href="#s-'+i[0]+'"/></svg></div><div class="body">'+
+     '<div class="t">'+esc(i[1])+'<span class="pri '+i[3]+'">'+i[3].toUpperCase()+'</span></div>'+
+     '<div class="d">'+esc(i[2])+'</div><div class="r">'+esc(i[4])+'</div></div></div>';
+ }).join('');
+
+/* ---- order bundle ---- */
+function key(i,f){return curTier+'|'+i+'|'+f;}
+function renderBundle(){
+  var B=BUNDLES[curTier], html='<h2>Propose Orders</h2>';
+  html+='<div class="tiers">'+TIER_ORDER.map(function(t){
+    return '<div class="tier'+(t===curTier?' on':'')+'" data-tier="'+t+'"><div class="n">'+BUNDLES[t].name+
+      '</div><div class="c">'+BUNDLES[t].items.length+' orders</div></div>';}).join('')+'</div>';
+  var cats=[],seen={};
+  B.items.forEach(function(it){ if(!seen[it[0]]){seen[it[0]]=1;cats.push(it[0]);} });
+  cats.sort(function(a,b){ if(a==='Medications')return -1; if(b==='Medications')return 1; return a<b?-1:1; });
+  cats.forEach(function(c){
+    html+='<div class="cat">'+c+'</div>';
+    B.items.forEach(function(it,i){
+      if(it[0]!==c) return;
+      var on=!!selected[curTier+'|'+i];
+      html+='<div class="oi'+(on?' sel':'')+'"><input type="checkbox" data-i="'+i+'"'+(on?' checked':'')+'>'+
+            '<div class="body"><div class="n">'+esc(it[1])+'</div><div class="m">'+esc(it[2])+'</div>';
+      if(it[3].length){
+        html+='<div class="fields">'+it[3].map(function(f,fi){
+          var k=key(i,fi), v=fieldVals[k]!==undefined?fieldVals[k]:f[1];
+          var need=f[2]&&!v;
+          return '<div class="fld"><label>'+esc(f[0])+(f[2]?' <span class="req">*</span>':'')+'</label>'+
+                 '<input type="text" data-k="'+k+'" value="'+esc(v)+'"'+(need?' class="need"':'')+
+                 (f[2]&&!v?' placeholder="required"':'')+'></div>';
+        }).join('')+'</div>';
+      }
+      html+='</div></div>';
+    });
+  });
+  var sel=[],missing=0;
+  B.items.forEach(function(it,i){
+    if(!selected[curTier+'|'+i]) return;
+    sel.push(i);
+    it[3].forEach(function(f,fi){ var v=fieldVals[key(i,fi)]!==undefined?fieldVals[key(i,fi)]:f[1]; if(f[2]&&!v) missing++; });
+  });
+  var msg = !sel.length ? 'Select the orders to propose.'
+          : missing ? sel.length+' selected · '+missing+' field'+(missing===1?'':'s')+' still need a value'
+          : sel.length+' selected · ready to propose';
+  html+='<div class="bar"><span class="msg">'+msg+'</span>'+
+    '<button class="btn" id="selAll">Select all</button>'+
+    '<button class="btn primary" id="propose"'+(!sel.length||missing?' disabled':'')+'>Propose '+(sel.length||'')+' Order'+(sel.length===1?'':'s')+'</button></div>';
+  document.getElementById('bundleCard').innerHTML=html;
+}
+document.getElementById('bundleCard').addEventListener('change',function(e){
+  var cb=e.target.closest('input[type=checkbox]');
+  if(cb){ selected[curTier+'|'+cb.dataset.i]=cb.checked; renderBundle(); }
+});
+document.getElementById('bundleCard').addEventListener('input',function(e){
+  var t=e.target.closest('input[data-k]');
+  if(t){ fieldVals[t.dataset.k]=t.value; var a=document.activeElement===t; renderBundle();
+         if(a){ var n=document.querySelector('input[data-k="'+t.dataset.k+'"]'); if(n){n.focus();n.setSelectionRange(n.value.length,n.value.length);} } }
+});
+document.getElementById('bundleCard').addEventListener('click',function(e){
+  var t=e.target.closest('[data-tier]');
+  if(t){ curTier=t.dataset.tier; renderBundle(); return; }
+  if(e.target.id==='selAll'){
+    BUNDLES[curTier].items.forEach(function(_,i){ selected[curTier+'|'+i]=true; });
+    renderBundle(); return;
+  }
+  if(e.target.id==='propose'){ doPropose(); }
+});
+
+function doPropose(){
+  var B=BUNDLES[curTier];
+  B.items.forEach(function(it,i){
+    if(!selected[curTier+'|'+i]) return;
+    if(proposed.some(function(p){return p.name===it[1]})) return;
+    proposed.push({name:it[1],meta:it[2],cat:it[0],status:'Proposed'});
+    selected[curTier+'|'+i]=false;
+  });
+  renderBundle(); renderTrack();
+  // orders move to Signed only once the clinician signs them in PowerChart
+  setTimeout(function(){
+    proposed.forEach(function(p){ if(p.status==='Proposed') p.status='Pending Signature'; });
+    renderTrack();
+  },1200);
+}
+function stColor(s){
+  s=s.toLowerCase();
+  if(/signed|complete|active|matched/.test(s)) return 'green';
+  if(/fail|error|reject|cancel/.test(s)) return 'red';
+  return 'orange';
+}
+function renderTrack(){
+  var el=document.getElementById('trackCard');
+  if(!proposed.length){
+    el.innerHTML='<h2>Proposed Orders</h2><div class="empty">Nothing proposed yet.</div>'; return;
+  }
+  var done=proposed.filter(function(p){return stColor(p.status)==='green'}).length;
+  el.innerHTML='<h2>Proposed Orders</h2>'+
+    '<div class="progress"><i style="width:'+Math.round(done/proposed.length*100)+'%"></i></div>'+
+    proposed.map(function(p){
+      return '<div class="tr"><div class="body"><div class="n">'+esc(p.name)+'</div><div class="m">'+esc(p.cat)+' · '+esc(p.meta)+'</div></div>'+
+             '<span class="st '+stColor(p.status)+'">'+p.status+'</span></div>';
+    }).join('')+
+    '<div class="hint">Proposed orders do not fire on their own. They land in the patient’s ' +
+    '<b>Orders</b> profile as unsigned proposals and in <b>Message Centre &#8250; Orders &#8250; Cosign Orders</b>, ' +
+    'where a provider signs them in the normal PowerChart workflow.</div>';
+}
+
+document.getElementById('back').addEventListener('click',function(){ location.href='patient.html?mrn='+mrn; });
+document.getElementById('ack').addEventListener('click',function(){
+  this.textContent='Acknowledged'; this.disabled=true;
+  document.querySelector('#hdrCard .dot').style.display='none';
+});
+window.addEventListener('message',function(e){ if(e.data&&e.data.type==='zoom') document.body.style.zoom=e.data.value/100; });
+
+renderBundle(); renderTrack();
+</script>
+</body>
+</html>

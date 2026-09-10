@@ -78,26 +78,27 @@
   [headers.values]
     Content-Security-Policy = "default-src 'self'; script-src 'self' 'sha256-l3tWVz1kaxqFurFF3lgOl80Tptb/TvtctqcLozXfK88='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
 
-# /demos/integrated/ is the MedBeacon Integrated MPage
-# (repo: MedBeacon/MedBeaconIntegrated), built with `npm run build:demo`.
-#
-# The real app is a server: its Cerner registration is a confidential client,
-# so the token exchange needs a secret and the FHIR reads go through a proxy.
-# This build is not that. It swaps the API layer for one that reads Cerner's
-# *open* R4 sandbox directly — the same synthetic patients, no authorization,
-# no secret, no server. See that repo's public/js/api.static.js.
+# /demos/mpage/ is the MedBeacon MPage mock — a fake PowerChart shell for
+# browser demos, sourced from DEMO/MedBeaconMPage (not itself in git).
+# Hand-written static HTML with no build step, so it is copied here as-is.
+# Every path in it is already relative, so it needs no sub-path build.
 
-# Multi-page app, but the router is the filesystem, so this only catches
-# mistyped paths and sends them to the one real page.
+# The shell and the MPage are separate documents, and the deep links carry
+# query strings (?mrn=). Real files win; this only catches mistyped paths.
 [[redirects]]
-  from = "/demos/integrated/*"
-  to = "/demos/integrated/index.html"
+  from = "/demos/mpage/*"
+  to = "/demos/mpage/index.html"
   status = 200
 
-# Unlike the other demos this one does make a network call: the open Cerner
-# sandbox. connect-src has to name that host or every FHIR read is blocked.
-# No inline scripts in this build, so script-src needs no hash.
+# Two things here differ from the other demos:
+#   - frame-ancestors is 'self', not 'none'. index.html frames
+#     mpage/index.html, and 'none' blocks that even same-origin.
+#   - script-src carries a hash per inline block: one each in index.html,
+#     mpage/index.html, mpage/patient.html and mpage/detail.html. Any edit
+#     to those scripts needs its hash regenerated or the page goes inert.
+# Self-contained otherwise: no external hosts, no fetches, so connect-src
+# stays 'self'.
 [[headers]]
-  for = "/demos/integrated/*"
+  for = "/demos/mpage/*"
   [headers.values]
-    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://fhir-open.cerner.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'sha256-9sscnVYT0rFBG13SSAM5L8WFdMOiBL5Nu6857i5/XG4=' 'sha256-eEQeLdZD2Cw5Rr+6oV6Se29NA7CYNqM1poK/r7BVveU=' 'sha256-a2xSnH+X6hfkCVlwRlc430P+3joG9GTwO5QcWUPPkWM=' 'sha256-AYHdsa5qmJ7gu4yfBiLa40cAHdY9PD/gu4X/eHCtwyY='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"

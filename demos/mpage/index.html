@@ -1,0 +1,1764 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PowerChart Organizer for Bierman, Shawn, MD</title>
+<style>
+:root{
+  --aero-a:#f7fbfe; --aero-b:#e3eef7; --aero-c:#d6e6f2; --aero-d:#eef6fc;
+  --aero-border:#9db8ce;
+  --navy-a:#24394f; --navy-b:#1b2f42;
+  --orgblue-a:#2a86c4; --orgblue-b:#136ca8;
+  --tb-hover-a:#fdfeff; --tb-hover-b:#d9ecfa; --tb-hover-brd:#7fb2dd;
+  --dlg-face:#eef0f2;
+  --sunken:#7f9db9;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{
+  font:12px/1.4 "Segoe UI","Segoe UI Web",Tahoma,Geneva,Verdana,sans-serif;
+  color:#1a1a1a;background:#5b7080;overflow:hidden;-webkit-font-smoothing:antialiased;
+}
+#app{position:absolute;inset:0;display:flex;flex-direction:column;background:#fff;border:1px solid #5d7a92}
+
+/* ============ title bar ============ */
+.titlebar{
+  height:30px;flex:0 0 30px;display:flex;align-items:center;padding:0 0 0 7px;user-select:none;
+  background:linear-gradient(to bottom,var(--aero-a) 0%,var(--aero-b) 48%,var(--aero-c) 49%,var(--aero-d) 100%);
+  border-bottom:1px solid var(--aero-border);
+}
+.pico{
+  width:17px;height:17px;flex:0 0 17px;margin-right:7px;border-radius:2px;
+  background:linear-gradient(to bottom,#3ea0dc,#1a6fae);border:1px solid #10547f;
+  color:#fff;font:bold 12px/15px "Segoe UI",Tahoma,sans-serif;text-align:center;
+}
+.titlebar .ttl{font-size:12.5px;color:#0d2233;text-shadow:0 1px 0 rgba(255,255,255,.9)}
+.titlebar .sp{flex:1}
+.wbtn{
+  width:42px;height:22px;margin-right:1px;display:flex;align-items:center;justify-content:center;
+  font-size:11px;color:#12405f;border:1px solid #93b3ce;border-top:none;border-radius:0 0 3px 3px;
+  background:linear-gradient(to bottom,#f3f9fd,#dceaf5);cursor:default;
+}
+.wbtn:hover{background:linear-gradient(to bottom,#fff,#cfe6f7)}
+.wbtn.close{width:56px;background:linear-gradient(to bottom,#f7d3cf,#e08b80);border-color:#b96b60;color:#5a1b12}
+.wbtn.close:hover{background:linear-gradient(to bottom,#ffb4a8,#d5483a);color:#fff}
+
+/* ============ menu bar ============ */
+.menubar{
+  height:26px;flex:0 0 26px;display:flex;align-items:center;padding:0 4px;user-select:none;
+  background:linear-gradient(to bottom,#ffffff,#f2f5f8);border-bottom:1px solid #e2e6ea;
+}
+.menubar span{padding:4px 10px;border-radius:2px;cursor:default;font-size:12.5px}
+.menubar span:hover{background:linear-gradient(to bottom,var(--tb-hover-a),var(--tb-hover-b));outline:1px solid var(--tb-hover-brd)}
+
+/* ============ toolbars ============ */
+.toolbar{
+  height:32px;flex:0 0 32px;display:flex;align-items:center;padding:0 2px;user-select:none;
+  background:linear-gradient(to bottom,#ffffff,#f6f8fa);overflow:hidden;white-space:nowrap;
+}
+.toolbar.row2{border-bottom:1px solid #e4e8ec}
+.grip{
+  width:7px;height:22px;flex:0 0 7px;margin:0 3px;
+  background-image:radial-gradient(circle,#b9c3cc 1px,transparent 1px);
+  background-size:3px 3px;background-position:1px 1px;
+}
+.tb{
+  display:inline-flex;align-items:center;gap:5px;height:25px;padding:0 7px;
+  border:1px solid transparent;border-radius:3px;cursor:default;font-size:12.5px;
+}
+.tb:hover{background:linear-gradient(to bottom,var(--tb-hover-a),var(--tb-hover-b));border-color:var(--tb-hover-brd)}
+.tb.on{background:linear-gradient(to bottom,#cfe6f8,#a9d0ee);border-color:#5f9fd0}
+.tb .ico{width:16px;height:16px;flex:0 0 16px;display:block}
+.tb.mb{font-weight:600;color:#0d4d78}
+.tb.disabled{color:#a3a9ae;pointer-events:none}
+.tb.disabled .ico{filter:grayscale(1);opacity:.45}
+/* muted: present in the real product, no function in this mock */
+.nofn{color:#9aa3ab}
+.nofn .ico,.nofn>svg{filter:grayscale(1);opacity:.45}
+.tb.nofn:hover{background:linear-gradient(to bottom,#f8fafb,#eff2f5);border-color:#e0e5ea}
+.toolbar.row2 .tb{pointer-events:none}
+.mi.nofn{color:#9aa3ab}
+.mi.nofn .dot{background:#c6ced5}
+.mi.nofn .badge{background:#b7bec5}
+.mi.nofn:hover{background:#f2f5f8;border-color:#e2e7ec}
+.pvni.nofn{color:#aab2b9}
+.pvni.nofn:hover{background:#f6f8fa}
+.pvtab.nofn{color:#9aa3ab}
+.mcn.nofn{color:#9aa3ab}
+.mcn.nofn:hover{background:#f4f7fa}
+.ib.nofn>svg{filter:grayscale(1);opacity:.4}
+.ib.nofn:hover{background:linear-gradient(to bottom,#f8fafb,#eff2f5);border-color:#e0e5ea}
+.pvtabs .rt .chip{color:#9aa3ab}
+.chev{display:inline-flex;align-items:center;justify-content:center;width:14px;height:25px;color:#4a5b69;font-size:8px;cursor:default}
+.chev:hover{background:linear-gradient(to bottom,var(--tb-hover-a),var(--tb-hover-b));border:1px solid var(--tb-hover-brd);border-radius:3px}
+
+/* ============ navy band: chart tabs + patient search ============ */
+.navyband{
+  height:30px;flex:0 0 30px;display:flex;align-items:center;padding:0 6px 0 4px;user-select:none;
+  background:linear-gradient(to bottom,var(--navy-a),var(--navy-b));gap:4px;
+}
+.ctab{
+  display:flex;align-items:center;gap:7px;height:22px;padding:0 6px 0 9px;border-radius:2px;
+  color:#dbe7f1;font-size:12px;font-weight:600;cursor:default;border:1px solid transparent;max-width:280px;
+}
+.ctab:hover{background:rgba(255,255,255,.12)}
+.ctab.on{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.28);color:#fff}
+.ctab .nm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ctab .dd{font-size:8px;opacity:.8}
+.ctab .cl{font-size:11px;opacity:.65;padding:0 2px}
+.ctab .cl:hover{opacity:1;color:#ffb4a8}
+.navyband .sp{flex:1}
+
+/* the patient search cluster */
+.psearch{display:flex;align-items:center;gap:4px}
+.recentbtn{
+  display:flex;align-items:center;gap:5px;height:21px;padding:0 6px;border-radius:2px;
+  color:#e4edf5;font-size:11.5px;cursor:default;border:1px solid rgba(255,255,255,.22);
+  background:rgba(255,255,255,.08);position:relative;
+}
+.recentbtn:hover{background:rgba(255,255,255,.2)}
+.recentbtn .dd{font-size:8px}
+.qwrap{position:relative;display:flex;align-items:center;height:21px;border:1px solid #8ba7c0;background:#fff;border-radius:1px}
+.qwrap input{
+  border:0;outline:0;font:12px "Segoe UI",Tahoma,sans-serif;padding:0 6px;width:160px;height:19px;background:transparent;
+}
+.qph{position:absolute;left:7px;top:50%;transform:translateY(-50%);color:#9aa5ae;font-size:12px;pointer-events:none}
+.qwrap .qdd{
+  width:16px;height:19px;display:flex;align-items:center;justify-content:center;font-size:8px;color:#33556f;
+  border-left:1px solid #d3dde6;background:linear-gradient(to bottom,#fdfefe,#eaf1f6);cursor:default;position:relative;
+}
+.qwrap .qdd:hover{background:linear-gradient(to bottom,#fff,#d9ecfa)}
+.magbtn{
+  width:22px;height:21px;display:flex;align-items:center;justify-content:center;border-radius:2px;
+  border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);cursor:default;
+}
+.magbtn:hover{background:rgba(255,255,255,.22)}
+
+/* small popup menus */
+.popup{
+  position:absolute;z-index:60;background:#fff;border:1px solid #8ba0b3;box-shadow:2px 3px 7px rgba(0,0,0,.28);
+  padding:2px;min-width:180px;display:none;
+}
+.popup.show{display:block}
+.popup .pi{padding:5px 10px;font-size:12px;cursor:default;white-space:nowrap;color:#1a1a1a}
+.popup .pi:hover{background:#2a86c4;color:#fff}
+.popup .pi.hdr{color:#5c6b7a;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;pointer-events:none;padding-top:6px}
+.popup .pi .mrn{color:#7a8794;font-size:11px;margin-left:6px}
+.popup .pi:hover .mrn{color:#d6e9f8}
+.popup .sepline{height:1px;background:#dfe4e9;margin:3px 0}
+
+/* ============ organizer / view header ============ */
+.orghead{
+  height:32px;flex:0 0 32px;display:flex;align-items:center;padding:0 16px;user-select:none;
+  background:linear-gradient(to bottom,var(--orgblue-a),var(--orgblue-b));
+  color:#fff;font-size:14px;font-weight:700;
+}
+.orghead .sp{flex:1}
+.orghead .rt{font-size:11.5px;font-weight:400;opacity:.95;display:flex;align-items:center;gap:14px}
+.orghead .rt span{cursor:default}
+.orghead .rt span:hover{text-decoration:underline}
+
+/* ============ patient banner bar (chart context) ============ */
+.banner{
+  display:none;flex:0 0 auto;padding:4px 10px 5px;color:#fff;
+  background:linear-gradient(to bottom,#5192c8,#2d6da8);border-bottom:1px solid #164a76;
+  grid-template-columns:250px 145px 130px 235px 115px 175px 1fr;column-gap:12px;row-gap:2px;align-items:baseline;
+}
+#app[data-ctx="pt"] .banner{display:grid}
+.f{display:flex;gap:4px;min-width:0;font-size:11.5px;line-height:1.5}
+.f b{font-weight:400;color:rgba(255,255,255,.86);flex:0 0 auto}
+.f i{font-style:normal;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bname{font-size:15px;font-weight:700;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.balg{font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.balg b{font-weight:400;color:rgba(255,255,255,.86)}
+.bcode{grid-column:span 2;font-size:11.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bfin{grid-column:span 3;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bfin b{font-weight:400;color:rgba(255,255,255,.86)}
+.bloc{grid-column:7;justify-self:end;align-self:center;font-size:18px;font-weight:700;
+  white-space:nowrap;text-shadow:0 1px 1px rgba(0,0,0,.3)}
+
+/* ============ body / menu pane ============ */
+.body{flex:1;display:flex;min-height:0}
+.mpane{display:none;width:180px;flex:0 0 180px;flex-direction:column;min-height:0;background:#eef1f5;border-right:1px solid #b8c2cc}
+#app[data-ctx="pt"] .mpane{display:flex}
+.mhead{
+  height:22px;flex:0 0 22px;display:flex;align-items:center;gap:6px;padding:0 5px;color:#fff;font-weight:600;font-size:12px;
+  background:linear-gradient(to bottom,#5b8dc0,#2c5f92);border-bottom:1px solid #1f4e79;
+}
+.mhead .sp{flex:1}
+.mhead .pin{cursor:default;padding:0 3px;opacity:.9}
+.mhead .pin:hover{opacity:1;background:rgba(255,255,255,.2);border-radius:2px}
+.mlist{flex:1;overflow-y:auto;padding:3px 0}
+.mlist .grp{padding:6px 8px 2px;color:#5c6b7a;font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.4px}
+.mi{display:flex;align-items:center;gap:6px;padding:4px 8px;cursor:default;border:1px solid transparent;color:#14395c;font-size:12px;white-space:nowrap}
+.mi:hover{background:#e3edf8;border-color:#bcd4ec}
+.mi.on{background:#cde3f7;border-color:#7da2ce;font-weight:600}
+.mi .dot{width:8px;height:8px;border-radius:2px;background:#7fa8d0;flex:0 0 8px}
+.mi.on .dot{background:#1f4e79}
+.mi .badge.med{background:#e08e0b}
+.mi .badge.low{background:#4a8f3c}
+.mi .badge{margin-left:auto;background:#c0392b;color:#fff;border-radius:8px;padding:0 5px;font-size:9px;font-weight:700}
+
+.main{flex:1;display:flex;flex-direction:column;min-width:0;min-height:0;background:#fff}
+
+/* ============ embedded browser toolbar ============ */
+.ietb{height:32px;flex:0 0 32px;display:flex;align-items:center;gap:2px;padding:0 6px;user-select:none;background:#fff;border-bottom:1px solid #cfcfcf}
+.ib{width:25px;height:25px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;border-radius:3px;cursor:default}
+.ib:hover{background:linear-gradient(to bottom,var(--tb-hover-a),var(--tb-hover-b));border-color:var(--tb-hover-brd)}
+.ib.dim{opacity:.4;pointer-events:none}
+.vsep{width:1px;height:19px;background:#d5d5d5;margin:0 5px;flex:0 0 1px}
+.zoom{display:flex;align-items:center;height:21px;border:1px solid #b5c4d1;border-radius:2px;background:#fff;margin:0 2px}
+.zoom .val{width:70px;padding:0 6px;font-size:12px;line-height:19px}
+.zoom .arw{width:16px;height:19px;border-left:1px solid #d3dde6;display:flex;align-items:center;justify-content:center;font-size:8px;color:#33556f;background:linear-gradient(to bottom,#fdfefe,#eaf1f6);cursor:default}
+
+/* ============ content ============ */
+.content{flex:1;min-height:0;position:relative;background:#fff}
+.content iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
+.stub{position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#7a8896;background:repeating-linear-gradient(45deg,#fafbfc,#fafbfc 12px,#f4f6f8 12px,#f4f6f8 24px)}
+.stub.show{display:flex}
+.stub .big{font-size:16px;font-weight:600;color:#4c6072}
+
+/* ============ status bar ============ */
+.statusbar{height:23px;flex:0 0 23px;display:flex;align-items:center;font-size:11.5px;color:#333;user-select:none;background:linear-gradient(to bottom,#f6f8fa,#e6eaee);border-top:1px solid #cdd4da}
+.statusbar .cell{padding:0 10px;height:100%;display:flex;align-items:center;gap:6px;border-right:1px solid #d6dce1}
+.statusbar .cell.grow{flex:1}
+.statusbar .cell.last{border-right:none}
+.led{width:8px;height:8px;border-radius:50%;background:#3fa34d;box-shadow:0 0 3px rgba(63,163,77,.8)}
+.led.amber{background:#e0a800;box-shadow:0 0 3px rgba(224,168,0,.8)}
+.lnk{color:#0b4f9e;text-decoration:underline;cursor:pointer}
+
+/* ============ Patient Search dialog ============ */
+.veil{position:absolute;inset:0;background:rgba(20,32,44,.22);z-index:80;display:none}
+.veil.show{display:block}
+.dlg{
+  position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);width:920px;height:560px;z-index:90;
+  display:none;flex-direction:column;background:var(--dlg-face);
+  border:1px solid #4a6a86;box-shadow:0 8px 26px rgba(0,0,0,.4);
+}
+.dlg.show{display:flex}
+.dlg .dtitle{
+  height:26px;flex:0 0 26px;display:flex;align-items:center;gap:6px;padding:0 4px 0 7px;user-select:none;
+  background:linear-gradient(to bottom,#f7fbfe,#dceaf5);border-bottom:1px solid #a8bdd0;
+}
+.dlg .dtitle b{font-size:12.5px;color:#0d2233;font-weight:700}
+.dlg .dtitle .sp{flex:1}
+.dlg .dtitle .db{width:22px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;border:1px solid #93b3ce;border-radius:2px;background:linear-gradient(to bottom,#f3f9fd,#dceaf5);margin-left:2px;cursor:default;color:#12405f}
+.dlg .dtitle .db.x{background:linear-gradient(to bottom,#f7d3cf,#e08b80);border-color:#b96b60;color:#5a1b12}
+.dlg .dtitle .db.x:hover{background:linear-gradient(to bottom,#ffb4a8,#d5483a);color:#fff}
+.dlg .dsub{height:20px;flex:0 0 20px;display:flex;align-items:center;padding:0 8px;font-size:11.5px;color:#33445a;background:linear-gradient(to bottom,#e8ecf0,#dde3e9);border-bottom:1px solid #c3cbd3}
+.dlg .dbody{flex:1;display:flex;min-height:0;padding:6px;gap:6px}
+
+.spanel{width:208px;flex:0 0 208px;display:flex;flex-direction:column;background:#e4e7ea;border:1px solid #b6bcc2;padding:8px 9px;overflow:auto}
+.spanel .lab{display:block;font-size:11.5px;color:#22303c;margin:0 0 2px}
+.spanel .fld{margin-bottom:9px}
+.spanel input[type=text]{width:100%;height:20px;border:1px solid var(--sunken);border-top-color:#5f7a94;background:#fff;font:12px "Segoe UI",Tahoma,sans-serif;padding:0 4px;outline:0}
+.spanel input[type=text]:focus{border-color:#2a86c4;box-shadow:0 0 0 1px #a9d0ee inset}
+.spanel .dob{display:flex}
+.spanel .dob input{flex:1}
+.spanel .dob .spin{width:15px;font-size:6px;line-height:1;border:1px solid var(--sunken);border-left:0;background:linear-gradient(to bottom,#fdfefe,#e7edf2);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:6px;color:#33556f;cursor:default}
+.spanel .dob .cal{width:17px;border:1px solid var(--sunken);border-left:0;background:linear-gradient(to bottom,#fdfefe,#e7edf2);display:flex;align-items:center;justify-content:center;font-size:8px;color:#33556f;cursor:default}
+.btnrow{display:flex;gap:8px;margin:4px 0 12px}
+.wbn{
+  min-width:64px;height:23px;padding:0 12px;font:12px "Segoe UI",Tahoma,sans-serif;color:#12222e;
+  border:1px solid #8ba0b3;border-radius:3px;background:linear-gradient(to bottom,#fdfdfd,#e6e9ec);cursor:pointer;
+}
+.wbn:hover{background:linear-gradient(to bottom,#ffffff,#d9ecfa);border-color:#7fb2dd}
+.wbn:active{background:#cfe6f8}
+.wbn:disabled{color:#a3a9ae;background:#eceef0;border-color:#c3c8cc;cursor:default}
+.wbn.def{border-color:#3f7fb5;box-shadow:0 0 0 1px #bcd9f0 inset}
+.qual{margin-top:auto}
+.qual .glab{font-size:11px;color:#3b4956;margin-bottom:3px}
+.qual .bar{height:14px;border:1px solid var(--sunken);background:#fff;position:relative;overflow:hidden}
+.qual .bar i{display:block;height:100%;width:0;background:repeating-linear-gradient(90deg,#4aa3df 0 7px,#e9f4fc 7px 9px);transition:width .25s}
+.qual .cb{display:flex;align-items:center;gap:5px;font-size:11.5px;color:#22303c;margin-top:6px}
+
+.rpanes{flex:1;display:flex;flex-direction:column;gap:6px;min-width:0}
+.pane{flex:1;min-height:0;border:1px solid var(--sunken);background:#fff;overflow:auto;position:relative}
+.pane.enc{flex:0 0 44%}
+.emptymsg{padding:6px 8px;font-size:12px;color:#4a4a4a}
+.dgrid{width:100%;border-collapse:collapse;font-size:11.5px}
+.dgrid th{
+  position:sticky;top:0;background:linear-gradient(to bottom,#fbfbfb,#eff0f1);color:#333;font-weight:400;text-align:left;
+  padding:4px 7px;border-bottom:1px solid #c2c2c2;border-right:1px solid #e0e0e0;white-space:nowrap;
+}
+.dgrid td{padding:4px 7px;border-bottom:1px solid #eee;border-right:1px solid #f2f2f2;white-space:nowrap}
+.dgrid tbody tr{cursor:default}
+.dgrid tbody tr:nth-child(even){background:#f4f9fd}
+.dgrid tbody tr:hover{background:#dbeefb}
+.dgrid tbody tr.sel{background:#2a86c4;color:#fff}
+.dgrid tbody tr.sel td{border-right-color:rgba(255,255,255,.25);border-bottom-color:rgba(255,255,255,.25)}
+.dfoot{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:0 8px 8px;justify-content:flex-end}
+.dfoot .sp{flex:1}
+.dfoot .hint{font-size:11px;color:#5a6a78}
+
+
+/* ============ Patient List screen ============ */
+.plview{position:absolute;inset:0;display:none;flex-direction:column;background:#fff}
+.plview.show{display:flex}
+.pltabs{flex:0 0 auto;display:flex;align-items:flex-end;padding:6px 8px 0;background:linear-gradient(to bottom,#eef2f6,#e2e8ee);border-bottom:1px solid #9fb6cd}
+.pltab{padding:6px 18px;margin-right:3px;border:1px solid #9fb6cd;border-bottom:none;border-radius:3px 3px 0 0;
+  background:linear-gradient(to bottom,#f7f9fb,#dde5ee);color:#14395c;cursor:default;font-size:12px;position:relative;top:1px}
+.pltab:hover{background:linear-gradient(to bottom,#fff,#e9f1fa)}
+.pltab.on{background:#fff;border-bottom:1px solid #fff;font-weight:700;z-index:2}
+.plwrap{flex:1;min-height:0;overflow:auto}
+.plgrid{width:100%;border-collapse:collapse;font-size:12px}
+.plgrid th{position:sticky;top:0;background:linear-gradient(to bottom,#fbfbfb,#eff0f1);color:#333;font-weight:400;
+  text-align:left;padding:6px 9px;border-bottom:1px solid #c2c2c2;border-right:1px solid #e2e2e2;white-space:nowrap}
+.plgrid td{padding:6px 9px;border-bottom:1px solid #e9e9e9;border-right:1px solid #f1f1f1;white-space:nowrap}
+.plgrid tbody tr:nth-child(even){background:#eef6fc}
+.plgrid tbody tr:hover{background:#d7ecf8}
+.plgrid .nm{font-weight:700;color:#1a1a1a}
+.plgrid tbody tr.sel{background:#2a86c4;color:#fff}
+.plgrid tbody tr.sel .nm{color:#fff}
+.plfoot{flex:0 0 auto;padding:5px 10px;font-size:11.5px;color:#5a6a78;border-top:1px solid #e4e8ec;background:#fafbfc}
+.plempty{padding:40px;text-align:center;color:#7a8896;font-size:13px}
+
+/* ============ list-maintenance dialogs ============ */
+.dlg.co{width:720px;height:440px}
+.cowrap{flex:1;display:flex;min-height:0;padding:8px;gap:8px}
+.codetail{flex:1;min-width:0;overflow:auto;border:1px solid var(--sunken);background:#fff;padding:8px 10px}
+.cof{display:flex;gap:8px;padding:4px 0;border-bottom:1px solid #f1f4f7;font-size:12px}
+.cof b{flex:0 0 130px;font-weight:400;color:#5a6a78}
+.cof i{font-style:normal;font-weight:600;color:#1a1a1a}
+.copane{width:264px;flex:0 0 264px;display:flex;flex-direction:column;gap:8px;border:1px solid #b6bcc2;background:#e4e7ea;padding:9px}
+.copane .cap{font-size:11.5px;font-weight:700;color:#22303c}
+.corow{display:flex;align-items:center;gap:8px;font-size:11.5px;color:#22303c}
+.corow.col{flex-direction:column;align-items:stretch;gap:3px}
+.corow span{flex:0 0 58px}
+.corow textarea{border:1px solid var(--sunken);font:12px "Segoe UI",Tahoma,sans-serif;padding:3px 4px;resize:none;outline:0}
+.cowarn{margin-top:auto;font-size:11px;color:#8a5b06;background:#fdf3e0;border:1px solid #e5cb96;padding:6px 8px}
+.dlg.sm{width:520px;height:380px}
+.dlg.md{width:660px;height:450px}
+.dlg .dpad{flex:1;display:flex;min-height:0;padding:12px;gap:10px}
+.lbox{flex:1;min-width:0;display:flex;flex-direction:column}
+.lbox.narrow{flex:0 0 168px}
+.lbox .cap{font-size:11.5px;color:#22303c;margin-bottom:3px}
+.lbox .box{flex:1;min-height:0;overflow:auto;border:1px solid var(--sunken);background:#fff}
+.li{padding:4px 9px;font-size:12px;cursor:default}
+.li:hover{background:#dbeefb}
+.li.on{background:#2a86c4;color:#fff}
+.midbtns{display:flex;flex-direction:column;justify-content:center;gap:8px;flex:0 0 auto}
+.tnode{display:flex;align-items:center;gap:6px;padding:4px 6px;font-size:12px;cursor:default}
+.tnode:hover{background:#eef6fc}
+.tnode .tw{width:12px;text-align:center;font-size:8px;color:#33556f}
+.tnode.child{padding-left:28px}
+.namerow{display:flex;align-items:center;gap:8px;padding:0 12px 10px;font-size:11.5px;color:#22303c}
+.namerow input{flex:1;height:21px;border:1px solid var(--sunken);padding:0 5px;font:12px "Segoe UI",Tahoma,sans-serif;background:#fff}
+.dnote{padding:0 12px 8px;font-size:11.5px;color:#5a6a78}
+
+/* ============ chart-context chrome bits ============ */
+.ptonly{display:none}
+#app[data-ctx="pt"] .ptonly{display:flex}
+#app[data-ctx="pt"] .orgonly{display:none}
+.navyband .listlnk{color:#dbe7f1;font-size:11.5px;padding:0 8px;cursor:default;align-items:center;height:21px}
+.navyband .listlnk:hover{text-decoration:underline;color:#fff}
+.orghead .nav{display:none;align-items:center;gap:2px;margin-right:12px}
+#app[data-ctx="pt"] .orghead .nav{display:flex}
+.orghead .nav span{width:19px;height:19px;display:flex;align-items:center;justify-content:center;border-radius:2px;font-size:11px;opacity:.9}
+.orghead .nav span:hover{background:rgba(255,255,255,.2)}
+.orghead .nav .vs{width:1px;height:15px;background:rgba(255,255,255,.35);margin:0 5px}
+
+/* ============ Message Center ============ */
+.mcview{position:absolute;inset:0;display:none;background:#eef1f4}
+.mcview.show{display:flex}
+.mcleft{width:272px;flex:0 0 272px;display:flex;flex-direction:column;min-height:0;padding:4px;gap:4px}
+.mcbox{border:1px solid #b6c0c9;background:#fff}
+.mcbox .cap{padding:4px 8px;font-size:11.5px;font-weight:700;color:#22303c;background:linear-gradient(to bottom,#f2f5f8,#e2e8ee);border-bottom:1px solid #cfd7df}
+.mctabs{display:flex;gap:2px;padding:4px 4px 0;background:#eef1f4}
+.mctab{padding:4px 14px;font-size:11.5px;border:1px solid #b6c0c9;border-bottom:none;border-radius:3px 3px 0 0;
+  background:linear-gradient(to bottom,#f8fafc,#e1e8ef);color:#20415f;cursor:default;position:relative;top:1px}
+.mctab.on{background:#fff;border-bottom:1px solid #fff;font-weight:700;z-index:2}
+.mcdisp{display:flex;align-items:center;gap:6px;padding:6px 8px;font-size:11.5px;color:#22303c;background:#fff;border-bottom:1px solid #e2e7ec}
+.mcsel{height:20px;border:1px solid var(--sunken);background:#fff;font:11.5px "Segoe UI",Tahoma,sans-serif;padding:0 3px;flex:1}
+.mctree{flex:1;min-height:0;overflow:auto;background:#fff}
+.mcg{padding:4px 8px;font-size:11.5px;font-weight:700;color:#22303c;background:linear-gradient(to bottom,#eef2f6,#e2e8ee);border-top:1px solid #dbe1e7;border-bottom:1px solid #dbe1e7;display:flex;gap:6px}
+.mcg .tw{font-size:9px;color:#4a5b69}
+.mcn{padding:3px 8px 3px 22px;font-size:11.5px;color:#12405f;cursor:default;display:flex;gap:6px}
+.mcn:hover{background:#eef6fc}
+.mcn.on{background:#2a86c4;color:#fff;font-weight:700}
+.mcn.sub{padding-left:38px;color:#1a1a1a}
+.mcn.sub.nofn{color:#9aa3ab}
+.mcn.sub.on{color:#fff}
+.mcright{flex:1;min-width:0;display:flex;flex-direction:column;padding:4px 4px 4px 0}
+.mcpane{flex:1;min-height:0;display:flex;flex-direction:column;border:1px solid #b6c0c9;background:#fff}
+.mctabrow{display:flex;gap:2px;padding:4px 4px 0}
+.mcbar{display:flex;align-items:center;gap:2px;padding:3px 4px;border-bottom:1px solid #dfe4e9;flex-wrap:wrap}
+.mcb{display:inline-flex;align-items:center;gap:5px;height:23px;padding:0 7px;font-size:12px;color:#12222e;border:1px solid transparent;border-radius:3px;cursor:default}
+.mcb:hover{background:linear-gradient(to bottom,var(--tb-hover-a),var(--tb-hover-b));border-color:var(--tb-hover-brd)}
+.mcb.off{color:#a3a9ae;pointer-events:none}
+.mcbar .vsep{margin:0 4px}
+.mcwrap{flex:1;min-height:0;overflow:auto}
+.mcfoot{display:none;align-items:center;gap:8px;padding:6px 8px;border-top:1px solid #dfe4e9;background:linear-gradient(to bottom,#fafbfc,#eef1f4)}
+.mcfoot .fh{font-size:11.5px;color:#5a6a78}
+.mcfoot .sp{flex:1}
+.mcgrid th{background:linear-gradient(to bottom,#fbfbfb,#eff0f1);border-right:1px solid #e2e2e2;color:#333}
+.mcgrid td{border-right:1px solid #f2f2f2}
+.mcgrid tbody tr:nth-child(even){background:#f4f9fd}
+.mcgrid tbody tr.sel{background:#2a86c4;color:#fff}
+.mcgrid tbody tr.sel .un{color:#fff}
+
+/* ============ native Provider View (workflow MPage) ============ */
+.pv{position:absolute;inset:0;display:none;flex-direction:column;background:#fff}
+.pv.show{display:flex}
+.pvtabs{flex:0 0 auto;display:flex;align-items:flex-end;gap:2px;padding:5px 6px 0;background:linear-gradient(to bottom,#f4f7fa,#e7edf3);border-bottom:1px solid #b9c5d0}
+.pvtab{display:flex;align-items:center;gap:12px;padding:6px 14px;font-size:12px;color:#20415f;cursor:default;
+  border:1px solid #b9c5d0;border-bottom:none;border-radius:3px 3px 0 0;background:linear-gradient(to bottom,#fbfcfd,#e3eaf1);position:relative;top:1px}
+.pvtab:hover{background:linear-gradient(to bottom,#fff,#eaf2fa)}
+.pvtab.on{background:#fff;border-bottom:1px solid #fff;font-weight:700;z-index:2}
+.pvtab .x{font-size:9px;opacity:.45}
+.pvtabs .sp{flex:1}
+.pvtabs .rt{display:flex;align-items:center;gap:6px;padding:0 4px 5px;font-size:11.5px;color:#4a5b69}
+.pvtabs .rt .chip{border:1px solid #c3ccd4;border-radius:3px;padding:2px 8px;background:linear-gradient(to bottom,#fbfcfd,#eef2f6);cursor:default}
+.pvbody{flex:1;display:flex;min-height:0}
+.pvnav{width:214px;flex:0 0 214px;min-height:0;overflow:auto;border-right:1px solid #d6dde3;background:#fff;padding:5px 0}
+.pvni{padding:5px 12px;font-size:12px;color:#1a1a1a;cursor:default;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pvni:hover{background:#eef6fc}
+.pvni.on{background:#2a86c4;color:#fff;font-weight:600}
+.pvni .el{color:#98a2ab}
+.pvni.on .el{color:#d6e9f8}
+.pvmain{flex:1;min-width:0;overflow:auto;padding:0 20px 60px}
+.pvsec{padding-top:20px;scroll-margin-top:8px}
+.pvh{display:flex;align-items:center;gap:8px;border-bottom:1px solid #d5dbe0;padding-bottom:5px;margin-bottom:9px}
+.pvh h2{margin:0;font-size:17px;font-weight:600;color:#41505d}
+.pvh .cnt{font-size:13px;color:#8a949d;font-weight:400}
+.pvh .sp{flex:1}
+.pvh .plus{color:#2a86c4;font-size:15px;font-weight:700;cursor:default}
+.segs{display:flex;border:1px solid #c3ccd4;border-radius:2px;overflow:hidden}
+.seg{padding:2px 9px;font-size:11px;color:#33556f;background:linear-gradient(to bottom,#fbfcfd,#eef2f6);border-right:1px solid #d5dbe0;cursor:default}
+.seg:last-child{border-right:none}
+.seg.on{background:#2c6ea8;color:#fff;font-weight:700}
+.pvh .ic{font-size:12px;color:#7a8896;padding:0 3px;cursor:default}
+.pvfree{font-size:13px;color:#1a1a1a;padding:2px 0 4px}
+.pvby{font-size:11.5px;color:#8a949d;padding-bottom:6px}
+.pvgrid{width:100%;border-collapse:collapse;font-size:11.5px}
+.pvgrid th{text-align:left;font-weight:400;color:#5a6a78;padding:4px 8px;border-bottom:1px solid #d5dbe0;white-space:nowrap;background:#fff}
+.pvgrid td{padding:5px 8px;border-bottom:1px solid #eef1f4;white-space:nowrap}
+.pvgrid tbody tr:hover{background:#eef6fc}
+.pvgrid .grp td{background:#dbe6ef;font-weight:700;color:#2b3f52}
+.pvgrid .un{color:#2a6db0}
+.pvgrid .ab{color:#c0392b;font-weight:700}
+.pvnote{font-size:11px;color:#8a949d;padding:6px 0 0}
+.pvfilt{display:flex;align-items:center;gap:18px;justify-content:flex-end;padding:0 0 7px;font-size:11.5px;color:#4a5b69}
+.pvfilt label{display:flex;align-items:center;gap:5px}
+.pvfilt .dv{border-left:1px solid #d5dbe0;padding-left:18px}
+.pvfilt .ar{font-size:8px;color:#7a8896}
+.pvempty{font-size:12.5px;color:#8a949d;padding:6px 0}
+.pvpill{display:inline-block;padding:1px 8px;border-radius:9px;font-size:11px;font-weight:700;border:1px solid}
+.pvpill.hi{background:#fdecea;border-color:#e3b3ac;color:#a32b1c}
+.pvpill.md{background:#fdf3e0;border-color:#e5cb96;color:#8a5b06}
+.pvpill.lo{background:#eaf5ea;border-color:#b6d6b3;color:#2c6b2a}
+
+/* MedBeacon link strip at the top of the chart view */
+.mbstrip{display:flex;align-items:center;gap:9px;margin:10px 0 2px;padding:5px 10px;cursor:pointer;
+  border:1px solid #ddc3bf;border-left:4px solid #c0392b;background:#fdf6f5}
+.mbstrip:hover{background:#fbeceb}
+.mbstrip.md{border-color:#e3d5ae;border-left-color:#d79b1a;background:#fdfaf1}
+.mbstrip.md:hover{background:#fbf5e6}
+.mbstrip.lo{border-color:#c9dcc7;border-left-color:#4a8f3c;background:#f4faf3}
+.mbstrip.lo:hover{background:#ebf5ea}
+.mbstrip .sc{min-width:26px;height:20px;padding:0 6px;border-radius:10px;background:#c0392b;color:#fff;
+  display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.mbstrip.md .sc{background:#d79b1a}
+.mbstrip.lo .sc{background:#4a8f3c}
+.mbstrip .lb{font-size:12.5px;font-weight:700;color:#2b3f52}
+.mbstrip .ds{font-size:11.5px;color:#5a6a78}
+.mbstrip .sp{flex:1}
+.mbstrip .go{font-size:12px;font-weight:700;color:#1f6fb2}
+.mbstrip:hover .go{color:#0d4d78;text-decoration:underline}
+
+/* patient-list criteria strip */
+.plcrit{flex:0 0 auto;padding:6px 10px;font-size:11.5px;color:#33445a;background:#fff;border-bottom:1px solid #e4e8ec}
+
+::-webkit-scrollbar{width:16px;height:16px}
+::-webkit-scrollbar-track{background:#f0f0f0;border-left:1px solid #dcdcdc}
+::-webkit-scrollbar-thumb{background:#c4ccd3;border:3px solid #f0f0f0;border-radius:8px}
+::-webkit-scrollbar-thumb:hover{background:#a4b0ba}
+</style>
+</head>
+<body>
+
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <symbol id="i-org" viewBox="0 0 16 16">
+    <rect x="1" y="2" width="14" height="12" rx="1" fill="#fff" stroke="#5b7c99"/>
+    <rect x="1" y="2" width="14" height="3.2" fill="#2a86c4"/>
+    <rect x="2.4" y="6.6" width="5" height="2.4" fill="#8fc0e4"/><rect x="8.6" y="6.6" width="5" height="2.4" fill="#c8dced"/>
+    <rect x="2.4" y="10" width="5" height="2.4" fill="#c8dced"/><rect x="8.6" y="10" width="5" height="2.4" fill="#8fc0e4"/>
+  </symbol>
+  <symbol id="i-msg" viewBox="0 0 16 16">
+    <rect x="1" y="3" width="14" height="10" rx="1" fill="#fff" stroke="#5b7c99"/>
+    <path d="M1.6 3.8L8 8.9l6.4-5.1" fill="none" stroke="#2a86c4" stroke-width="1.3"/>
+  </symbol>
+  <symbol id="i-patient" viewBox="0 0 16 16">
+    <circle cx="8" cy="3.1" r="2.1" fill="#2a86c4"/>
+    <path d="M5.4 6h5.2l1.6 3.6-1.5.7-1-2.1V15h-1.4v-3.6H7.7V15H6.3V8.2l-1 2.1-1.5-.7z" fill="#2a86c4"/>
+  </symbol>
+  <symbol id="i-search" viewBox="0 0 16 16">
+    <circle cx="6.6" cy="6.6" r="4.6" fill="#cfe7f7" stroke="#1f6fa8" stroke-width="1.3"/>
+    <path d="M6.6 2v9.2M2 6.6h9.2" stroke="#4d9ac9"/>
+    <path d="M10.2 10.2l4 4" stroke="#33556f" stroke-width="2.2" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-mag-w" viewBox="0 0 16 16">
+    <circle cx="6.8" cy="6.8" r="4.4" fill="none" stroke="#ffffff" stroke-width="1.6"/>
+    <path d="M10.2 10.2l3.6 3.6" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-mag-d" viewBox="0 0 16 16">
+    <circle cx="6.8" cy="6.8" r="4.4" fill="#eaf3fa" stroke="#33556f" stroke-width="1.5"/>
+    <path d="M10.2 10.2l3.6 3.6" stroke="#33556f" stroke-width="2" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-folder" viewBox="0 0 16 16">
+    <path d="M1.5 3.5h4.6l1.2 1.6h7.2v7.4H1.5z" fill="#f0c46a" stroke="#b08a2e"/>
+    <path d="M1.5 6.6h13v5.9H1.5z" fill="#ffd98a" stroke="#b08a2e"/>
+  </symbol>
+  <symbol id="i-beacon" viewBox="0 0 16 16">
+    <path d="M8 1.6l4.6 8.2c.5.9-.1 2-1.1 2H4.5c-1 0-1.6-1.1-1.1-2z" fill="#0f6ca8" stroke="#0a4b76"/>
+    <circle cx="8" cy="8.6" r="1.7" fill="#ffd34d"/>
+    <path d="M2.4 3.4C1.4 4.6 1.4 6.4 2.4 7.6M13.6 3.4c1 1.2 1 3 0 4.2" fill="none" stroke="#f0a500" stroke-width="1.3" stroke-linecap="round"/>
+    <rect x="4" y="13" width="8" height="1.6" rx=".8" fill="#0a4b76"/>
+  </symbol>
+  <symbol id="i-binoc" viewBox="0 0 16 16">
+    <path d="M2 6h3.4l.6 6.4a1.7 1.7 0 01-3.4.2z" fill="#4a5b69"/><path d="M14 6h-3.4l-.6 6.4a1.7 1.7 0 003.4.2z" fill="#4a5b69"/>
+    <rect x="2" y="3" width="3.4" height="3" fill="#33414d"/><rect x="10.6" y="3" width="3.4" height="3" fill="#33414d"/>
+    <rect x="6.6" y="5.4" width="2.8" height="4" fill="#6b7d8c"/>
+  </symbol>
+  <symbol id="i-page" viewBox="0 0 16 16"><path d="M4 1.6h5l3 3v9.8H4z" fill="#e9edf1" stroke="#7d8b98"/><path d="M9 1.6v3h3" fill="none" stroke="#7d8b98"/></symbol>
+  <symbol id="i-pageprev" viewBox="0 0 16 16"><path d="M4 1.6h5l3 3v9.8H4z" fill="#e9edf1" stroke="#7d8b98"/><path d="M9.6 6.2L6.4 8.4l3.2 2.2z" fill="#4a5b69"/></symbol>
+  <symbol id="i-pagenext" viewBox="0 0 16 16"><path d="M4 1.6h5l3 3v9.8H4z" fill="#e9edf1" stroke="#7d8b98"/><path d="M6.4 6.2l3.2 2.2-3.2 2.2z" fill="#4a5b69"/></symbol>
+  <symbol id="i-zoomout" viewBox="0 0 16 16"><circle cx="6.8" cy="6.8" r="4.6" fill="#eaf3fa" stroke="#4a5b69" stroke-width="1.3"/><path d="M4.4 6.8h4.8" stroke="#c0392b" stroke-width="1.6"/><path d="M10.3 10.3l3.7 3.7" stroke="#4a5b69" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="i-zoomin" viewBox="0 0 16 16"><circle cx="6.8" cy="6.8" r="4.6" fill="#eaf3fa" stroke="#4a5b69" stroke-width="1.3"/><path d="M4.4 6.8h4.8M6.8 4.4v4.8" stroke="#1a6b2f" stroke-width="1.6"/><path d="M10.3 10.3l3.7 3.7" stroke="#4a5b69" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="i-back" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="#3faa4a" stroke="#287c31"/><path d="M9.6 4.4L5.6 8l4 3.6z" fill="#fff"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" fill="#b9c0c6" stroke="#8d959b"/><path d="M5.4 5.4l5.2 5.2M10.6 5.4l-5.2 5.2" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-home" viewBox="0 0 16 16"><path d="M8 1.8L1.6 7.4h1.8V14h3.2v-3.8h2.8V14h3.2V7.4h1.8z" fill="#ffc84a" stroke="#b07d12"/></symbol>
+  <symbol id="i-person" viewBox="0 0 24 28"><circle cx="12" cy="9" r="5" fill="#8fa4b8"/><path d="M2 27c0-5.5 4.5-9 10-9s10 3.5 10 9z" fill="#8fa4b8"/></symbol>
+  <symbol id="i-note" viewBox="0 0 16 16"><path d="M3 1.8h10v12.4H3z" fill="#fff8c4" stroke="#b8a53c"/><path d="M5 5h6M5 7.6h6M5 10.2h4" stroke="#a08f2e" stroke-width="1.1" stroke-linecap="round"/></symbol>
+  <symbol id="i-exit" viewBox="0 0 16 16"><path d="M6.4 2.5H3.5v11h2.9" fill="none" stroke="#4a6b8a" stroke-width="1.3"/><path d="M8 8h6M11.5 5.5L14 8l-2.5 2.5" fill="none" stroke="#c0392b" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-calc" viewBox="0 0 16 16"><rect x="3" y="1.5" width="10" height="13" rx="1" fill="#fff" stroke="#4a6b8a"/><rect x="4.5" y="3" width="7" height="2.5" fill="#cfe3f5" stroke="#8aa9c6"/><g fill="#4a7ebb"><rect x="4.5" y="6.6" width="2" height="2"/><rect x="7" y="6.6" width="2" height="2"/><rect x="9.5" y="6.6" width="2" height="2"/><rect x="4.5" y="9.4" width="2" height="2"/><rect x="7" y="9.4" width="2" height="2"/><rect x="9.5" y="9.4" width="2" height="2"/></g></symbol>
+  <symbol id="i-chat" viewBox="0 0 16 16"><path d="M1.5 3.5h13v8h-7l-3.5 3v-3h-2.5z" fill="#fff" stroke="#4a6b8a"/><path d="M4 6.5h8M4 9h5" stroke="#2c5f92" stroke-width="1.2" stroke-linecap="round"/></symbol>
+  <symbol id="i-pill" viewBox="0 0 16 16"><rect x="2" y="6" width="12" height="5" rx="2.5" fill="#fff" stroke="#4a6b8a" transform="rotate(-30 8 8.5)"/><path d="M8 4.2L5.2 9" stroke="#4a6b8a"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 16 16"><path d="M3.5 1.5h6l3 3v10h-9z" fill="#fff" stroke="#4a6b8a"/><path d="M9.5 1.5v3h3" fill="none" stroke="#4a6b8a"/><path d="M5.5 7.5h5M5.5 10h5" stroke="#2c5f92" stroke-width="1.1" stroke-linecap="round"/></symbol>
+  <symbol id="i-wrench" viewBox="0 0 16 16">
+    <path d="M10.6 1.6a4 4 0 00-3.7 5.5L1.8 12.2a1.4 1.4 0 002 2l5.1-5.1a4 4 0 005.2-4.8l-2.2 2.2-2-.5-.5-2 2.2-2.2a4 4 0 00-1-.2z" fill="#c8ced4" stroke="#5d6b78"/>
+  </symbol>
+  <symbol id="i-addpt" viewBox="0 0 16 16">
+    <circle cx="6" cy="4" r="2.4" fill="#2a86c4"/><path d="M1.6 13c0-2.4 2-3.9 4.4-3.9s4.4 1.5 4.4 3.9z" fill="#2a86c4"/>
+    <path d="M12.6 8v5M10.1 10.5h5" stroke="#1a6b2f" stroke-width="1.8" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-rmpt" viewBox="0 0 16 16">
+    <circle cx="6" cy="4" r="2.4" fill="#8fa4b8"/><path d="M1.6 13c0-2.4 2-3.9 4.4-3.9s4.4 1.5 4.4 3.9z" fill="#8fa4b8"/>
+    <path d="M10.1 10.5h5" stroke="#c0392b" stroke-width="1.8" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-expand" viewBox="0 0 16 16">
+    <path d="M3 4l3 4-3 4M8 4l3 4-3 4" fill="none" stroke="#4a5b69" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
+  <symbol id="i-clip" viewBox="0 0 16 16">
+    <rect x="3" y="2.4" width="10" height="12" rx="1" fill="#fff" stroke="#5d6b78"/>
+    <rect x="5.6" y="1.2" width="4.8" height="2.6" rx="1" fill="#c8ced4" stroke="#5d6b78"/>
+    <path d="M5.4 7h5.2M5.4 9.4h5.2M5.4 11.8h3" stroke="#7d8b98" stroke-width="1.1" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-rel" viewBox="0 0 16 16">
+    <circle cx="4.6" cy="5" r="2.2" fill="#2a86c4"/><circle cx="11.4" cy="5" r="2.2" fill="#8fc0e4"/>
+    <path d="M1.4 13c0-2 1.4-3.4 3.2-3.4S7.8 11 7.8 13zM8.2 13c0-2 1.4-3.4 3.2-3.4S14.6 11 14.6 13z" fill="#6fa3cd"/>
+  </symbol>
+  <symbol id="i-dlgsearch" viewBox="0 0 16 16"><circle cx="7" cy="7" r="4.6" fill="#cfe7f7" stroke="#1f6fa8" stroke-width="1.4"/><path d="M10.4 10.4l3.4 3.4" stroke="#1f6fa8" stroke-width="2.2" stroke-linecap="round"/></symbol>
+</svg>
+
+<div id="app" data-ctx="org">
+
+  <div class="titlebar">
+    <div class="pico">P</div>
+    <div class="ttl" id="winTitle">PowerChart Organizer for Bierman, Shawn, MD</div>
+    <div class="sp"></div>
+    <div class="wbtn">&#9472;</div><div class="wbtn">&#9633;</div><div class="wbtn close">&#10005;</div>
+  </div>
+
+  <div class="menubar">
+    <span>Task</span><span>Edit</span><span>View</span><span>Patient</span><span>Chart</span>
+    <span>Links</span><span>Notifications</span><span id="menuCtx">Inbox</span><span>Help</span>
+  </div>
+
+  <div class="toolbar" id="toolbar">
+    <div class="grip"></div>
+    <div class="tb on" id="btnMsgCentre" data-view="Message Centre" data-native="mc"><svg class="ico"><use href="#i-msg"/></svg>Message Centre</div>
+    <div class="tb nofn" data-view="Patient Overview"><svg class="ico"><use href="#i-org"/></svg>Patient Overview</div>
+    <div class="tb nofn" data-view="Ambulatory Organizer"><svg class="ico"><use href="#i-org"/></svg>Ambulatory Organizer</div>
+    <div class="tb nofn" data-view="MyExperience"><svg class="ico"><use href="#i-org"/></svg>MyExperience</div>
+    <div class="tb" data-view="Patient List" data-native="plist"><svg class="ico"><use href="#i-patient"/></svg>Patient List</div>
+    <div class="tb nofn" data-view="Tracking Shell">Tracking Shell</div>
+    <div class="tb nofn" data-view="Dynamic Worklist"><svg class="ico"><use href="#i-org"/></svg>Dynamic Worklist</div>
+    <div class="tb mb" id="btnMedBeacon" data-view="MedBeacon" data-src="mpage/index.html"><svg class="ico"><use href="#i-beacon"/></svg>MedBeacon</div>
+    <div class="chev">&#9660;</div>
+    <div class="grip"></div>
+    <div class="tb nofn" data-view="PACS"><svg class="ico"><use href="#i-search"/></svg>PACS</div>
+    <div class="tb nofn" data-view="FormFast WFL"><svg class="ico"><use href="#i-search"/></svg>FormFast WFL</div>
+  </div>
+
+  <div class="toolbar row2">
+    <div class="grip"></div>
+    <div class="tb ptonly nofn"><svg class="ico"><use href="#i-doc"/></svg>Tear Off</div>
+    <div class="tb nofn"><svg class="ico"><use href="#i-note"/></svg>New Sticky Note</div>
+    <div class="tb nofn"><svg class="ico"><use href="#i-exit"/></svg>Exit</div>
+    <div class="tb nofn"><svg class="ico"><use href="#i-calc"/></svg>Calculator</div>
+    <div class="tb nofn"><svg class="ico"><use href="#i-doc"/></svg>AdHoc</div>
+    <div class="tb nofn"><svg class="ico"><use href="#i-person"/></svg>PM Conversation <span class="chev">&#9660;</span></div>
+    <div class="tb nofn"><svg class="ico"><use href="#i-chat"/></svg>Communicate <span class="chev">&#9660;</span></div>
+    <div class="tb nofn"><svg class="ico"><use href="#i-pill"/></svg>Medication Administration</div>
+    <div class="tb nofn"><svg class="ico"><use href="#i-doc"/></svg>Depart</div>
+    <div class="tb nofn"><svg class="ico"><use href="#i-doc"/></svg>Patient Education</div>
+  </div>
+
+  <!-- navy band: open chart tabs + the patient search cluster -->
+  <div class="navyband">
+    <div id="chartTabs" style="display:flex;gap:4px;align-items:center"></div>
+    <div class="sp"></div>
+    <div class="psearch">
+      <div class="listlnk ptonly" id="listLnk">List</div>
+      <div class="recentbtn" id="recentBtn"><svg width="14" height="14"><use href="#i-folder"/></svg>Recent<span class="dd">&#9660;</span></div>
+      <div class="qwrap">
+        <span class="qph" id="qph">Name</span><input type="text" id="qbox" name="qbox" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-autocomplete="none" data-1p-ignore data-lpignore="true" data-form-type="other">
+        <div class="qdd" id="qualBtn">&#9660;</div>
+      </div>
+      <div class="magbtn" id="magBtn" title="Patient Search"><svg width="14" height="14"><use href="#i-mag-w"/></svg></div>
+    </div>
+  </div>
+
+  <!-- patient banner bar, chart context only -->
+  <div class="banner">
+    <div class="bname" id="bName">&nbsp;</div>
+    <div class="f"><b>DOB:</b><i id="bDob"></i></div>
+    <div class="f"><b>Age:</b><i id="bAge"></i></div>
+    <div class="f"><b>Dose Wt:</b><i id="bWt"></i></div>
+    <div class="f"><b>Sex:</b><i id="bSex"></i></div>
+    <div class="f"><b>MRN:</b><i id="bMrn"></i></div>
+    <div class="f"><b>Attending:</b><i id="bAttend"></i></div>
+    <div class="balg"><b>Allergies:</b> <span id="bAllergy"></span></div>
+    <div class="bcode" id="bCode"></div>
+    <div class="bfin" id="bFin"></div>
+    <div class="bloc" id="bLoc"></div>
+  </div>
+  <div class="body">
+    <div class="mpane">
+      <div class="mhead"><span>Menu</span><span class="sp"></span><span class="pin">&#128204;</span></div>
+      <div class="mlist" id="mlist">
+        <div class="grp">Summary</div>
+        <div class="mi" id="miMedBeacon" data-src="mpage/patient.html" data-label="MedBeacon"><span class="dot"></span>MedBeacon<span class="badge" id="mbBadge"></span></div>
+        <div class="mi on" id="miProviderView" data-native="pv" data-label="Internal Medicine View"><span class="dot"></span>Provider View</div>
+        <div class="mi nofn" data-label="Nurse View"><span class="dot"></span>Nurse View</div>
+        <div class="grp">Chart</div>
+        <div class="mi nofn"><span class="dot"></span>Orders<span class="badge">4</span></div>
+        <div class="mi nofn"><span class="dot"></span>MAR</div>
+        <div class="mi nofn"><span class="dot"></span>Medication List</div>
+        <div class="mi nofn"><span class="dot"></span>Results Review</div>
+        <div class="mi nofn"><span class="dot"></span>Interactive View and I&amp;O</div>
+        <div class="mi nofn"><span class="dot"></span>Documentation</div>
+        <div class="mi nofn"><span class="dot"></span>Notes</div>
+        <div class="mi nofn"><span class="dot"></span>Form Browser</div>
+        <div class="grp">Clinical</div>
+        <div class="mi nofn"><span class="dot"></span>Allergies</div>
+        <div class="mi nofn"><span class="dot"></span>Diagnoses and Problems</div>
+        <div class="mi nofn"><span class="dot"></span>Histories</div>
+        <div class="mi nofn"><span class="dot"></span>Care Plans</div>
+        <div class="mi nofn"><span class="dot"></span>Patient Information</div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="orghead">
+        <span class="nav"><span>&#9664;</span><span>&#9654;</span><span style="font-size:8px">&#9660;</span><i class="vs"></i><span>&#127968;</span></span>
+        <span id="orgTitle">MedBeacon</span>
+        <span class="sp"></span>
+        <span class="rt">
+          <span>&#9974; Full screen</span>
+          <span>&#128438; Print</span>
+          <span id="orgStamp">&#8635; 0 minutes ago</span>
+        </span>
+      </div>
+
+      <div class="ietb" id="ietbBrowser">
+        <div class="ib nofn" title="Find"><svg width="16" height="16"><use href="#i-binoc"/></svg></div>
+        <div class="ib nofn" title="Print preview"><svg width="16" height="16"><use href="#i-page"/></svg></div>
+        <div class="vsep"></div>
+        <div class="ib nofn"><svg width="16" height="16"><use href="#i-pageprev"/></svg></div>
+        <div class="ib nofn"><svg width="16" height="16"><use href="#i-pagenext"/></svg></div>
+        <div class="vsep"></div>
+        <div class="ib" id="zoomOut" title="Zoom out"><svg width="16" height="16"><use href="#i-zoomout"/></svg></div>
+        <div class="ib" id="zoomIn" title="Zoom in"><svg width="16" height="16"><use href="#i-zoomin"/></svg></div>
+        <div class="zoom"><div class="val" id="zoomVal">100%</div><div class="arw">&#9660;</div></div>
+        <div class="vsep"></div>
+        <div class="ib" id="btnBack" title="Back"><svg width="16" height="16"><use href="#i-back"/></svg></div>
+        <div class="ib" id="btnStop" title="Refresh"><svg width="16" height="16"><use href="#i-stop"/></svg></div>
+        <div class="ib" id="btnHome" title="Home"><svg width="16" height="16"><use href="#i-home"/></svg></div>
+      </div>
+
+      <div class="ietb" id="ietbPlist" style="display:none">
+        <div class="ib" id="wrenchBtn" title="List Maintenance"><svg width="16" height="16"><use href="#i-wrench"/></svg></div>
+        <div class="vsep"></div>
+        <div class="ib" id="plAddPt" title="Add Patient"><svg width="16" height="16"><use href="#i-addpt"/></svg></div>
+        <div class="ib nofn" title="Remove Patient"><svg width="16" height="16"><use href="#i-rmpt"/></svg></div>
+        <div class="vsep"></div>
+        <div class="ib nofn" title="Establish Relationships"><svg width="16" height="16"><use href="#i-rel"/></svg></div>
+        <div class="ib nofn" title="Expand All"><svg width="16" height="16"><use href="#i-expand"/></svg></div>
+        <div class="ib nofn" title="Patient List Report"><svg width="16" height="16"><use href="#i-clip"/></svg></div>
+        <div class="vsep"></div>
+        <div class="ib nofn" title="Print"><svg width="16" height="16"><use href="#i-page"/></svg></div>
+      </div>
+
+      <div class="content">
+        <iframe id="mpframe" src="mpage/index.html" title="MedBeacon MPage"></iframe>
+        <div class="plview" id="plView"></div>
+
+        <!-- ===== Message Center (organizer, native) ===== -->
+        <div class="mcview" id="mcView">
+          <div class="mcleft">
+            <div class="mcbox" style="display:flex;flex-direction:column;flex:1;min-height:0">
+              <div class="cap">Inbox Summary <span style="float:right;opacity:.7">&#128204;</span></div>
+              <div class="mctabs">
+                <div class="mctab on">Inbox</div><div class="mctab">Proxies</div><div class="mctab">Pools</div>
+              </div>
+              <div class="mcdisp">Display:
+                <select class="mcsel"><option>Last 30 Days</option><option>Last 7 Days</option><option>All</option></select>
+                <span style="border:1px solid #b6c0c9;padding:0 6px;background:linear-gradient(to bottom,#fdfdfd,#e6e9ec)">...</span>
+              </div>
+              <div class="mctree" id="mcTree">
+                <div class="mcg"><span class="tw">&#9660;</span>Inbox Items (41)</div>
+                <div class="mcn on" data-mc="Results FYI">Results FYI (1/1)</div>
+                <div class="mcn sub nofn" data-mc="Other">Other (1/1)</div>
+                <div class="mcn" id="mcnOrders" data-mc="Orders">Orders (25/25)</div>
+                <div class="mcn sub" id="mcnCosign" data-mc="Cosign Orders">Cosign Orders (25/25)</div>
+                <div class="mcn nofn" data-mc="Documents">Documents (8/8)</div>
+                <div class="mcn sub nofn" data-mc="Sign">Sign (5/5)</div>
+                <div class="mcn sub nofn" data-mc="Review">Review (3/3)</div>
+                <div class="mcn nofn" data-mc="Messages">Messages (7/7)</div>
+                <div class="mcn sub nofn" data-mc="General Messages">General Messages (7/7)</div>
+                <div class="mcg"><span class="tw">&#9660;</span>Work Items (1)</div>
+                <div class="mcn sub nofn" data-mc="Saved Documents">Saved Documents</div>
+                <div class="mcn sub nofn" data-mc="Paper Based Documents">Paper Based Documents</div>
+                <div class="mcn sub nofn" data-mc="Deficient Documents">Deficient Documents (1/1)</div>
+                <div class="mcn sub nofn" data-mc="Reminders">Reminders</div>
+                <div class="mcg"><span class="tw">&#9660;</span>Notifications</div>
+                <div class="mcn sub nofn" data-mc="Sent Items">Sent Items</div>
+                <div class="mcn sub nofn" data-mc="Trash">Trash</div>
+                <div class="mcn sub nofn" data-mc="Notify Receipts">Notify Receipts</div>
+              </div>
+            </div>
+          </div>
+          <div class="mcright">
+            <div class="mctabrow"><div class="mctab on"><span id="mcTabName">Results FYI</span> <span style="opacity:.5;font-size:9px">&#10005;</span></div></div>
+            <div class="mcpane">
+              <div class="mcbar" id="mcBar"></div>
+              <div class="mcwrap" id="mcWrap"></div>
+              <div class="mcfoot" id="mcFoot"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ===== native chart view (Provider View workflow MPage) ===== -->
+        <div class="pv" id="pvView">
+          <div class="pvtabs" id="pvTabs">
+            <div class="pvtab on">Workflow <span class="x">&#9744;</span></div>
+            <div class="pvtab nofn">Inpatient Summary <span class="x">&#9744;</span></div>
+            <div class="pvtab nofn">Quick Orders <span class="x">&#9744;</span></div>
+            <div class="pvtab nofn">Discharge <span class="x">&#9744;</span></div>
+            <div class="pvtab nofn">Calculators <span class="x">&#9744;</span></div>
+            <div class="pvtab nofn" style="padding:6px 10px">+</div>
+            <div class="sp"></div>
+            <div class="rt"><span class="chip">No-Severity</span><span class="chip">&#9873;</span><span class="chip">&#128269;</span><span class="chip">&#9776;</span></div>
+          </div>
+          <div class="pvbody">
+            <div class="pvnav" id="pvNav"></div>
+            <div class="pvmain" id="pvMain"></div>
+          </div>
+        </div>
+        <div class="stub" id="stub">
+          <div class="big" id="stubTitle">Ambulatory Organizer</div>
+          <div>Not built in this mock. Click <b>MedBeacon</b> on the toolbar to return to the MPage.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="statusbar">
+    <div class="cell"><span class="led"></span>PROD &#183; MC</div>
+    <div class="cell">Bierman, Shawn, MD</div>
+    <div class="cell grow"></div>
+    <div class="cell"><span class="lnk" id="chromeToggle">Hide chrome</span></div>
+    <div class="cell"><span class="led amber"></span>P0581 &#183; 6523</div>
+    <div class="cell last" id="clock">August 24, 2026 &#183; 14:32 EDT</div>
+  </div>
+
+  <!-- ============ Patient Search dialog ============ -->
+  <div class="veil" id="veil"></div>
+  <div class="dlg" id="psDlg">
+    <div class="dtitle">
+      <svg width="14" height="14"><use href="#i-dlgsearch"/></svg>
+      <b>Patient Search</b>
+      <span class="sp"></span>
+      <span class="db x" id="dlgX">&#10005;</span>
+    </div>
+    <div class="dbody">
+      <div class="spanel">
+        <div class="fld"><span class="lab">SSN:</span><input type="text" id="pcf1" name="pcf1" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-autocomplete="none" data-1p-ignore data-lpignore="true" data-form-type="other"></div>
+        <div class="fld"><span class="lab">Last Name:</span><input type="text" id="pcf2" name="pcf2" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-autocomplete="none" data-1p-ignore data-lpignore="true" data-form-type="other"></div>
+        <div class="fld"><span class="lab">First Name:</span><input type="text" id="pcf3" name="pcf3" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-autocomplete="none" data-1p-ignore data-lpignore="true" data-form-type="other"></div>
+        <div class="fld"><span class="lab">DOB:</span>
+          <div class="dob">
+            <input type="text" id="pcf4" name="pcf4" placeholder="**/**/****" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-autocomplete="none" data-1p-ignore data-lpignore="true" data-form-type="other">
+            <div class="spin"><span>&#9650;</span><span>&#9660;</span></div>
+            <div class="cal">&#9660;</div>
+          </div>
+        </div>
+        <div class="fld"><span class="lab">MRN:</span><input type="text" id="pcf5" name="pcf5" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-autocomplete="none" data-1p-ignore data-lpignore="true" data-form-type="other"></div>
+        <div class="fld"><span class="lab">FIN:</span><input type="text" id="pcf6" name="pcf6" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" aria-autocomplete="none" data-1p-ignore data-lpignore="true" data-form-type="other"></div>
+        <div class="fld"><span class="lab">Sex:</span>
+          <select id="pcf7" class="mcsel" style="width:100%"><option value=""></option><option>Female</option><option>Male</option></select>
+        </div>
+        <div class="btnrow">
+          <button class="wbn" id="btnSearch"><u>S</u>earch</button>
+          <button class="wbn" id="btnReset"><u>R</u>eset</button>
+        </div>
+      </div>
+      <div class="rpanes">
+        <div class="pane" id="personPane"><div class="emptymsg">No persons found.</div></div>
+        <div class="pane enc" id="encPane"><div class="emptymsg">No encounters found.</div></div>
+      </div>
+    </div>
+    <div class="dfoot">
+      <span class="hint" id="dlgHint">Enter search criteria, then click Search.</span>
+      <span class="sp"></span>
+      <button class="wbn" id="btnOk" disabled>OK</button>
+      <button class="wbn" id="btnCancel">Cancel</button>
+    </div>
+  </div>
+
+  <!-- Modify Patient Lists -->
+  <div class="dlg md" id="mplDlg">
+    <div class="dtitle"><svg width="14" height="14"><use href="#i-wrench"/></svg><b>Modify Patient Lists</b>
+      <span class="sp"></span><span class="db">?</span><span class="db x" data-close-dlg>&#10005;</span></div>
+    <div class="dpad">
+      <div class="lbox"><div class="cap">Available lists:</div><div class="box" id="availBox"></div></div>
+      <div class="midbtns"><button class="wbn" id="mplAdd">Add</button><button class="wbn" id="mplRemove">Remove</button></div>
+      <div class="lbox"><div class="cap">Active lists:</div><div class="box" id="activeBox"></div></div>
+      <div class="midbtns"><button class="wbn" disabled>Move Up</button><button class="wbn" disabled>Move Down</button></div>
+    </div>
+    <div class="dfoot"><button class="wbn" id="mplNew">New</button><span class="sp"></span>
+      <button class="wbn def" id="mplOk">OK</button><button class="wbn" data-close-dlg>Cancel</button></div>
+  </div>
+
+  <!-- Patient List Type -->
+  <div class="dlg sm" id="pltDlg">
+    <div class="dtitle"><svg width="14" height="14"><use href="#i-org"/></svg><b>Patient List Type</b>
+      <span class="sp"></span><span class="db">?</span><span class="db x" data-close-dlg>&#10005;</span></div>
+    <div class="dpad">
+      <div class="lbox"><div class="cap">Select a patient list type:</div><div class="box" id="typeBox"></div></div>
+    </div>
+    <div class="dnote" id="typeNote">Location builds a live census of every patient on a unit.</div>
+    <div class="dfoot"><span class="sp"></span><button class="wbn" disabled>Back</button>
+      <button class="wbn def" id="pltNext" disabled>Next</button>
+      <button class="wbn" disabled>Finish</button><button class="wbn" data-close-dlg>Cancel</button></div>
+  </div>
+
+  <!-- Location wizard -->
+  <div class="dlg md" id="plocDlg">
+    <div class="dtitle"><svg width="14" height="14"><use href="#i-org"/></svg><b>Location Patient List</b>
+      <span class="sp"></span><span class="db">?</span><span class="db x" data-close-dlg>&#10005;</span></div>
+    <div class="dpad">
+      <div class="lbox narrow"><div class="cap">Available filters:</div><div class="box" id="filtBox"></div></div>
+      <div class="lbox"><div class="cap">Locations:</div><div class="box" id="treeBox"></div></div>
+    </div>
+    <div class="namerow"><span>Enter a name for the list:</span><input type="text" id="listName" readonly
+      autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" data-1p-ignore data-lpignore="true"></div>
+    <div class="dnote">The name is set from the location you select. Do not rename a Location list.</div>
+    <div class="dfoot"><span class="sp"></span><button class="wbn" id="plocBack">Back</button>
+      <button class="wbn" disabled>Next</button>
+      <button class="wbn def" id="plocFinish" disabled>Finish</button><button class="wbn" data-close-dlg>Cancel</button></div>
+  </div>
+
+  <!-- ============ Cosign Orders review window ============ -->
+  <div class="dlg co" id="coDlg">
+    <div class="dtitle">
+      <svg width="14" height="14"><use href="#i-doc"/></svg>
+      <b>Order Cosignature - <span id="coName"></span></b>
+      <span class="sp"></span>
+      <span class="db x" id="coX">&#10005;</span>
+    </div>
+    <div class="cowrap">
+      <div class="codetail" id="coBody"></div>
+      <div class="copane">
+        <div class="cap">Action Pane</div>
+        <div class="corow"><span>Action:</span>
+          <select id="coAction" class="mcsel"><option>Approve</option><option>Refuse</option></select>
+        </div>
+        <div class="corow" id="coReasonRow"><span>Reason:</span>
+          <select id="coReason" class="mcsel"></select>
+        </div>
+        <div class="corow col"><span>Comment:</span>
+          <textarea id="coComment" rows="3"></textarea>
+        </div>
+        <div class="cowarn" id="coWarn">Refusing an order does not remove it from the order profile.
+          Follow up with the nurse or the unit may be required.</div>
+      </div>
+    </div>
+    <div class="dfoot">
+      <span class="sp"></span>
+      <button class="wbn def" id="coClose">OK &amp; Close</button>
+      <button class="wbn" id="coNext">OK &amp; Next</button>
+      <button class="wbn" id="coCancel">Cancel</button>
+    </div>
+  </div>
+
+  <div class="popup" id="recentPop"></div>
+  <div class="popup" id="qualPop">
+    <div class="pi" data-q="Name">Name</div>
+    <div class="pi" data-q="MRN">MRN</div>
+    <div class="pi" data-q="FIN NBR">FIN NBR</div>
+    <div class="pi" data-q="SSN">SSN</div>
+  </div>
+</div>
+
+<script>
+(function(){
+/* ---------------- demo patient data ---------------- */
+var PATIENTS=[
+ {last:'HARRINGTON',first:'MARGARET',mid:'E',mrn:'100254871',score:92,dob:'04/17/1948',age:'78 Years',sex:'Female',
+  phone:'(614) 555-0182',addr:'482 Kingsley Ave, Columbus OH',
+  allergy:'Penicillins, Sulfa, Latex',code:'Full Code',iso:'Contact (MRSA)',wt:'72.4 kg (08/24 06:00)',
+  enc:[{fin:'2200048913',fac:'Memorial Central',type:'Inpatient',loc:'MC 5W / 5W12 / A',svc:'Hospitalist',
+        admit:'08/21/2026 14:06',disch:'',attend:'Whitfield, Alan T, MD',status:'Active'},
+       {fin:'2200048801',fac:'Memorial Central',type:'Emergency',loc:'MC ED / ED08',svc:'Emergency Medicine',
+        admit:'08/21/2026 09:41',disch:'08/21/2026 14:06',attend:'Serrano, Nia P, MD',status:'Discharged'}]},
+ {last:'OKONKWO',first:'DANIEL',mid:'J',mrn:'100318844',score:84,dob:'11/02/1962',age:'64 Years',sex:'Male',
+  phone:'(614) 555-0447',addr:'19 Bramble Ct, Dublin OH',
+  allergy:'No Known Allergies',code:'Full Code',iso:'None',wt:'88.1 kg (08/24 05:30)',
+  enc:[{fin:'2200051277',fac:'Memorial Central',type:'Inpatient',loc:'MC ICU / ICU04',svc:'Critical Care',
+        admit:'08/22/2026 03:18',disch:'',attend:'Whitfield, Alan T, MD',status:'Active'}]},
+ {last:'VASQUEZ',first:'ROSA',mid:'M',mrn:'100290117',score:67,dob:'06/29/1971',age:'55 Years',sex:'Female',
+  phone:'(740) 555-0913',addr:'7710 Meadow Ln, Newark OH',
+  allergy:'Codeine',code:'Full Code',iso:'None',wt:'64.8 kg (08/23 22:00)',
+  enc:[{fin:'2200049980',fac:'Memorial Central',type:'Inpatient',loc:'MC 6E / 6E21 / B',svc:'Nephrology',
+        admit:'08/20/2026 11:52',disch:'',attend:'Nakamura, Iris K, MD',status:'Active'}]},
+ {last:'HARRINGTON',first:'ROBERT',mid:'A',mrn:'100112349',score:12,dob:'02/08/1955',age:'71 Years',sex:'Male',
+  phone:'(614) 555-0182',addr:'482 Kingsley Ave, Columbus OH',
+  allergy:'No Known Allergies',code:'DNR',iso:'None',wt:'91.0 kg (04/12 09:00)',
+  enc:[{fin:'2199120044',fac:'Memorial North',type:'Outpatient',loc:'MN Clinic 2',svc:'Cardiology',
+        admit:'04/12/2026 08:30',disch:'04/12/2026 10:05',attend:'Prasad, Vijay R, MD',status:'Discharged'}]},
+ {last:'BRENNAN',first:'PATRICK',mid:'L',mrn:'100277203',score:61,dob:'09/14/1955',age:'71 Years',sex:'Male',
+  phone:'(614) 555-0771',addr:'3 Halstead Row, Westerville OH',
+  allergy:'Aspirin',code:'DNR / DNI',iso:'None',wt:'79.3 kg (08/24 06:15)',
+  enc:[{fin:'2200050310',fac:'Memorial Central',type:'Inpatient',loc:'MC 5W / 5W03 / A',svc:'Hospitalist',
+        admit:'08/22/2026 19:40',disch:'',attend:'Whitfield, Alan T, MD',status:'Active'}]},
+ {last:'LINDQVIST',first:'ANNA',mid:'K',mrn:'100301992',score:38,dob:'01/23/1980',age:'46 Years',sex:'Female',
+  phone:'(614) 555-0298',addr:'55 Ferndale Pl, Columbus OH',
+  allergy:'Shellfish',code:'Full Code',iso:'None',wt:'61.2 kg (08/24 06:05)',
+  enc:[{fin:'2200047766',fac:'Memorial Central',type:'Inpatient',loc:'MC 6E / 6E08 / A',svc:'Hospitalist',
+        admit:'08/19/2026 16:22',disch:'',attend:'Nakamura, Iris K, MD',status:'Active'}]},
+ {last:'MARCHETTI',first:'LEO',mid:'S',mrn:'100322450',score:24,dob:'07/05/1993',age:'33 Years',sex:'Male',
+  phone:'(614) 555-0620',addr:'220 Orchard St, Grove City OH',
+  allergy:'No Known Allergies',code:'Full Code',iso:'None',wt:'83.7 kg (08/23 21:00)',
+  enc:[{fin:'2200052001',fac:'Memorial Central',type:'Inpatient',loc:'MC 5W / 5W18 / B',svc:'Hospitalist',
+        admit:'08/23/2026 08:10',disch:'',attend:'Whitfield, Alan T, MD',status:'Active'}]},
+ {last:'CHEN',first:'WEI',mid:'L',mrn:'100334102',score:44,dob:'03/11/1958',age:'68 Years',sex:'Male',
+  phone:'(614) 555-0344',addr:'901 Truro Bend, Hilliard OH',
+  allergy:'No Known Allergies',code:'Full Code',iso:'None',wt:'76.5 kg (08/24 06:00)',
+  enc:[{fin:'2200052644',fac:'Memorial Central',type:'Inpatient',loc:'MC 5W / 5W05 / A',svc:'Hospitalist',
+        admit:'08/22/2026 12:44',disch:'',attend:'Whitfield, Alan T, MD',status:'Active'}]},
+ {last:'ABERNATHY',first:'JOYCE',mid:'R',mrn:'100309556',score:19,dob:'12/30/1944',age:'81 Years',sex:'Female',
+  phone:'(740) 555-0155',addr:'44 Lark Hollow, Granville OH',
+  allergy:'Morphine',code:'DNR',iso:'None',wt:'58.9 kg (08/24 05:50)',
+  enc:[{fin:'2200050902',fac:'Memorial Central',type:'Inpatient',loc:'MC 5W / 5W07 / B',svc:'Geriatrics',
+        admit:'08/21/2026 07:15',disch:'',attend:'Prasad, Vijay R, MD',status:'Active'}]},
+ {last:'PATEL',first:'NIRAV',mid:'D',mrn:'100341870',score:57,dob:'08/19/1986',age:'40 Years',sex:'Male',
+  phone:'(614) 555-0709',addr:'128 Sable Run, Powell OH',
+  allergy:'No Known Allergies',code:'Full Code',iso:'Droplet',wt:'80.2 kg (08/24 06:20)',
+  enc:[{fin:'2200053118',fac:'Memorial Central',type:'Inpatient',loc:'MC 5W / 5W09 / A',svc:'Hospitalist',
+        admit:'08/23/2026 21:30',disch:'',attend:'Whitfield, Alan T, MD',status:'Active'}]},
+ {last:'SOKOLOV',first:'MIRA',mid:'',mrn:'100298433',score:31,dob:'05/07/1969',age:'57 Years',sex:'Female',
+  phone:'(614) 555-0862',addr:'6 Winslow Ct, Gahanna OH',
+  allergy:'Iodinated contrast',code:'Full Code',iso:'None',wt:'69.4 kg (08/23 22:10)',
+  enc:[{fin:'2200051455',fac:'Memorial Central',type:'Inpatient',loc:'MC 5W / 5W15 / A',svc:'Pulmonology',
+        admit:'08/22/2026 06:05',disch:'',attend:'Nakamura, Iris K, MD',status:'Active'}]},
+ {last:'DUBOIS',first:'HENRI',mid:'P',mrn:'100327019',score:73,dob:'10/22/1951',age:'74 Years',sex:'Male',
+  phone:'(614) 555-0231',addr:'77 Calder Way, Reynoldsburg OH',
+  allergy:'Penicillins',code:'Full Code',iso:'Contact (C. diff)',wt:'85.0 kg (08/24 06:10)',
+  enc:[{fin:'2200052890',fac:'Memorial Central',type:'Inpatient',loc:'MC 5W / 5W20 / B',svc:'Hospitalist',
+        admit:'08/23/2026 14:55',disch:'',attend:'Whitfield, Alan T, MD',status:'Active'}]}
+];
+function fullName(p){ return p.last+', '+p.first+(p.mid?' '+p.mid:''); }
+
+/* per-patient extras: EMPI, PCP, reason for visit, chart content */
+var EXTRA={
+ '100254871':{pcp:'Prasad, Vijay R, MD',reason:['Fever, altered mental status','Dysuria, fever'],
+   cc:'Fever and confusion since this morning, two days of burning with urination.',
+   dx:[['Sepsis due to urinary tract infection','Active','08/21/2026','Whitfield, Alan T, MD'],
+       ['Type 2 diabetes mellitus','Active','03/2014','Prasad, Vijay R, MD'],
+       ['Chronic kidney disease, stage 3','Active','06/2019','Prasad, Vijay R, MD'],
+       ['Essential hypertension','Active','2008','Prasad, Vijay R, MD']],
+   meds:[['metFORMIN 1,000 mg','PO, BID with meals','Reconciled 08/21/2026'],
+         ['lisinopril 20 mg','PO, daily','Reconciled 08/21/2026'],
+         ['atorvastatin 40 mg','PO, nightly','Reconciled 08/21/2026'],
+         ['furosemide 20 mg','PO, daily PRN edema','Reconciled 08/21/2026']],
+   micro:[['Blood Culture x2','08/24 13:50','In process','No growth to date (0.4 days)'],
+          ['Urine Culture','08/21 15:10','Final','&gt;100,000 CFU/mL E. coli, ESBL positive']]},
+ '100318844':{pcp:'Nakamura, Iris K, MD',reason:['Hypotension, tachypnea'],
+   cc:'Transferred from 4W for hypotension and rising oxygen requirement.',
+   dx:[['Septic shock','Active','08/22/2026','Whitfield, Alan T, MD'],
+       ['Community acquired pneumonia','Active','08/22/2026','Whitfield, Alan T, MD'],
+       ['Atrial fibrillation','Active','2021','Nakamura, Iris K, MD']],
+   meds:[['apixaban 5 mg','PO, BID','Reconciled 08/22/2026'],
+         ['metoprolol succinate 50 mg','PO, daily','Reconciled 08/22/2026']],
+   micro:[['Blood Culture x2','08/22 04:05','Preliminary','Gram positive cocci in clusters, 1 of 2 bottles'],
+          ['Respiratory Culture','08/22 06:30','In process','Pending']]},
+ '100290117':{pcp:'Prasad, Vijay R, MD',reason:['Fever on dialysis'],
+   cc:'Fever and rigors during outpatient dialysis yesterday afternoon.',
+   dx:[['End stage renal disease on hemodialysis','Active','2018','Nakamura, Iris K, MD'],
+       ['Tunneled catheter infection, suspected','Active','08/20/2026','Nakamura, Iris K, MD'],
+       ['Anemia of chronic kidney disease','Active','2019','Nakamura, Iris K, MD']],
+   meds:[['calcitriol 0.25 mcg','PO, daily','Reconciled 08/20/2026'],
+         ['sevelamer 800 mg','PO, TID with meals','Reconciled 08/20/2026']],
+   micro:[['Blood Culture x2 (catheter and peripheral)','08/20 12:40','Preliminary','Gram negative rods, peripheral bottle']]}
+};
+var DEFAULT_REASONS=['Abdominal pain','Chest pain','Shortness of breath','Weakness','Fever','Cellulitis','Pneumonia','Back pain'];
+PATIENTS.forEach(function(p,i){
+  var x=EXTRA[p.mrn]||{};
+  p.empi='HNE010000000000'+String(80+i*7);
+  p.pcp=x.pcp||'Prasad, Vijay R, MD';
+  p.cc=x.cc||'';
+  p.dx=x.dx||[];
+  p.meds=x.meds||[];
+  p.micro=x.micro||[];
+  p.enc.forEach(function(e,j){
+    e.reason=(x.reason||[])[j]||DEFAULT_REASONS[(i+j)%DEFAULT_REASONS.length];
+    e.est=e.type==='Emergency'?e.admit:'';
+    e.admitting=e.attend;
+  });
+});
+
+/* vitals and labs track the sepsis score so the demo stays consistent */
+function vitalsFor(p){
+  var hi=p.score>=80, md=p.score>=55;
+  return [['Temperature', hi?'38.9':md?'38.2':'37.0', hi?'38.2':md?'37.9':'36.9', hi?'37.6':md?'37.5':'36.8','&#176;C',hi||md],
+          ['Heart Rate',  hi?'118':md?'104':'82',      hi?'104':md?'98':'78',      hi?'96':md?'92':'76','bpm',hi||md],
+          ['Resp Rate',   hi?'24':md?'21':'16',        hi?'20':md?'19':'16',       hi?'18':md?'18':'15','/min',hi],
+          ['BP',          hi?'92/54':md?'104/61':'126/74', hi?'104/62':md?'112/66':'128/76', hi?'118/70':md?'118/70':'124/78','mmHg',hi],
+          ['SpO2',        hi?'93':md?'95':'98',        hi?'95':md?'96':'98',       hi?'97':md?'97':'99','%',false],
+          ['MAP',         hi?'62':md?'72':'88',        hi?'74':md?'79':'92',       hi?'84':md?'85':'93','mmHg',hi]];
+}
+function labsFor(p){
+  var hi=p.score>=80, md=p.score>=55;
+  return [['Lactic Acid', hi?'3.1':md?'2.2':'1.1','mmol/L','0.5 - 2.0',hi||md],
+          ['WBC',         hi?'16.8':md?'13.1':'8.2','K/uL','4.0 - 11.0',hi||md],
+          ['Creatinine',  hi?'1.6':md?'1.3':'0.9','mg/dL','0.6 - 1.1',hi||md],
+          ['Platelets',   hi?'118':md?'166':'232','K/uL','150 - 400',hi],
+          ['Bilirubin, Total', hi?'1.9':md?'1.2':'0.7','mg/dL','0.2 - 1.2',hi],
+          ['Hemoglobin',  hi?'10.2':md?'11.4':'13.6','g/dL','12.0 - 16.0',hi||md]];
+}
+function docsFor(p){
+  var a=p.enc[0].attend, d=p.enc[0].admit.slice(0,5);
+  return [[d+' 08:56','Consult Note','Infectious Disease Consultation <i>(Unauth)</i>','Nakamura, Iris K, MD',false],
+          [d+' 08:50','Admission H&amp;P','History and Physical <i>(Unauth)</i>',a,false],
+          ['GROUP','Completed','','',false],
+          ['08/24/26 10:43','Progress Note','Internal Medicine Progress Note','Delgado, Priya S, RN',true],
+          ['08/23/26 08:58','Progress Note','Internal Medicine Progress Note',a,true],
+          [d+' 16:38','Admission H&amp;P','History and Physical',a,true]];
+}
+
+/* ---------------- element refs ---------------- */
+var app=document.getElementById('app'), frame=document.getElementById('mpframe'),
+    stub=document.getElementById('stub'), stubT=document.getElementById('stubTitle'),
+    orgT=document.getElementById('orgTitle'), stamp=document.getElementById('orgStamp'),
+    toolbar=document.getElementById('toolbar'), mlist=document.getElementById('mlist'),
+    tabsEl=document.getElementById('chartTabs'), veil=document.getElementById('veil'),
+    dlg=document.getElementById('psDlg'), qbox=document.getElementById('qbox'), qph=document.getElementById('qph'),
+    personPane=document.getElementById('personPane'), encPane=document.getElementById('encPane'),
+    btnOk=document.getElementById('btnOk'), hint=document.getElementById('dlgHint'),
+    recentPop=document.getElementById('recentPop'), qualPop=document.getElementById('qualPop'),
+    winTitle=document.getElementById('winTitle');
+
+var openCharts=[], activeChart=null, recent=[], qualifier='Name',
+    selPerson=null, selEnc=null, lastOrgView={title:'MedBeacon',src:'mpage/index.html'};
+
+/* ---------------- clock ---------------- */
+function hhmm(off){var d=new Date(Date.now()-(off||0)*60000);return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');}
+function tick(){
+  var d=new Date(),m=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('clock').innerHTML=m[d.getMonth()]+' '+d.getDate()+', '+d.getFullYear()+' &#183; '+hhmm()+' EDT';
+}
+tick(); setInterval(tick,20000);
+var refreshedAt=Date.now();
+function touchRefresh(){refreshedAt=Date.now();paintStamp();}
+function paintStamp(){
+  var mins=Math.floor((Date.now()-refreshedAt)/60000);
+  stamp.innerHTML='&#8635; '+(mins===0?'0 minutes ago':mins+(mins===1?' minute ago':' minutes ago'));
+}
+paintStamp(); setInterval(paintStamp,30000);
+
+/* ---------------- view switching ---------------- */
+var plView=document.getElementById('plView'),
+    mcView=document.getElementById('mcView'),
+    pvView=document.getElementById('pvView'),
+    menuCtx=document.getElementById('menuCtx'),
+    ietbBrowser=document.getElementById('ietbBrowser'),
+    ietbPlist=document.getElementById('ietbPlist');
+/* kind: '' iframe MPage, 'stub', 'plist', 'mc' Message Center, 'pv' native chart view */
+function setChrome(kind){
+  plView.classList.toggle('show',kind==='plist');
+  mcView.classList.toggle('show',kind==='mc');
+  pvView.classList.toggle('show',kind==='pv');
+  stub.classList.toggle('show',kind==='stub');
+  frame.style.display=kind===''?'block':'none';
+  ietbBrowser.style.display=(kind===''||kind==='stub'||kind==='pv')?'flex':'none';
+  ietbPlist.style.display=kind==='plist'?'flex':'none';
+}
+function showSrc(src){ setChrome(''); frame.src=src; }
+function showStub(t){ stubT.textContent=t; setChrome('stub'); }
+function showPlist(){ setChrome('plist'); renderPl(); }
+function showMc(){ setChrome('mc'); renderMc(); }
+function showPv(){ setChrome('pv'); renderPv(); }
+
+function paintToolbar(view){
+  toolbar.querySelectorAll('.tb').forEach(function(n){
+    n.classList.toggle('on', !!view && n.dataset.view===view);
+  });
+}
+function goOrganizer(title,src,native){
+  app.dataset.ctx='org'; activeChart=null; paintToolbar(title);
+  winTitle.textContent='PowerChart Organizer for Bierman, Shawn, MD';
+  orgT.textContent=title; lastOrgView={title:title,src:src||'',native:native||''};
+  menuCtx.textContent=native==='mc'?'Inbox':(native==='plist'?'Patient List':'Navigation');
+  if(native==='plist') showPlist();
+  else if(native==='mc') showMc();
+  else if(src) showSrc(src); else showStub(title);
+  paintTabs(); touchRefresh();
+}
+toolbar.addEventListener('click',function(e){
+  var b=e.target.closest('.tb'); if(!b||!b.dataset.view) return;
+  goOrganizer(b.dataset.view, b.dataset.src, b.dataset.native);
+});
+
+/* ---------------- chart tabs ---------------- */
+function paintTabs(){
+  tabsEl.innerHTML='';
+  openCharts.forEach(function(c,i){
+    var t=document.createElement('div');
+    t.className='ctab'+(activeChart===c?' on':'');
+    t.innerHTML='<span class="nm">'+fullName(c.p)+'</span><span class="dd">&#9660;</span><span class="cl" data-close="'+i+'">&#10005;</span>';
+    tabsEl.appendChild(t);
+  });
+}
+tabsEl.addEventListener('click',function(e){
+  var cl=e.target.closest('[data-close]');
+  if(cl){ var i=+cl.dataset.close, closing=openCharts[i];
+    openCharts.splice(i,1);
+    if(activeChart===closing){ goOrganizer(lastOrgView.title,lastOrgView.src); }
+    paintTabs(); return; }
+  var t=e.target.closest('.ctab'); if(!t) return;
+  activateChart(openCharts[Array.prototype.indexOf.call(tabsEl.children,t)]);
+});
+
+function openChart(p,enc){
+  var existing=openCharts.filter(function(c){return c.p.mrn===p.mrn})[0];
+  if(existing){ existing.enc=enc||existing.enc; activateChart(existing); }
+  else{ var c={p:p,enc:enc||p.enc[0]}; openCharts.push(c); activateChart(c); }
+  recent=recent.filter(function(r){return r.mrn!==p.mrn}); recent.unshift(p);
+  if(recent.length>9) recent.length=9;
+}
+function activateChart(c){
+  activeChart=c; app.dataset.ctx='pt';
+  var p=c.p,e=c.enc;
+  winTitle.textContent=fullName(p)+' - '+p.mrn+' Opened by Bierman, Shawn, MD';
+  menuCtx.textContent='Navigation';
+  document.getElementById('bName').textContent=fullName(p);
+  document.getElementById('bDob').textContent=p.dob;
+  document.getElementById('bAge').textContent=p.age;
+  document.getElementById('bSex').textContent=p.sex;
+  document.getElementById('bMrn').textContent=p.mrn;
+  document.getElementById('bWt').textContent=p.wt;
+  document.getElementById('bAttend').textContent=e.attend;
+  document.getElementById('bAllergy').textContent=p.allergy;
+  document.getElementById('bCode').textContent=p.code+(p.iso&&p.iso!=='None'?'  \u00b7  Isolation: '+p.iso:'');
+  document.getElementById('bFin').innerHTML='<b>'+e.type+' FIN:</b> '+e.fin+
+    ' [Admit Dt: '+e.admit+'  Disch Dt: '+(e.disch||'&lt;No - Discharge Date&gt;')+']';
+  document.getElementById('bLoc').textContent='Loc:'+e.loc.replace(/ \/ /g,': ');
+  var b=document.getElementById('mbBadge');
+  if(p.score==null){ b.style.display='none'; }
+  else{ b.style.display=''; b.textContent=p.score;
+        b.className='badge'+(p.score>=80?'':(p.score>=55?' med':' low')); }
+  var on=mlist.querySelector('.mi.on')||document.getElementById('miProviderView');
+  selectMenu(on);
+  paintTabs(); touchRefresh();
+}
+function selectMenu(mi){
+  if(!mi||!activeChart) return;
+  mlist.querySelectorAll('.mi').forEach(function(n){n.classList.remove('on')});
+  mi.classList.add('on');
+  var label=mi.dataset.label||mi.textContent.replace(/\d+$/,'').trim();
+  orgT.textContent=label;
+  paintToolbar(mi.id==='miMedBeacon'?'MedBeacon':'');
+  if(mi.dataset.native==='pv') showPv();
+  else if(mi.dataset.src) showSrc(mi.dataset.src+'?mrn='+activeChart.p.mrn);
+  else showStub(label);
+  touchRefresh();
+}
+mlist.addEventListener('click',function(e){
+  var mi=e.target.closest('.mi'); if(mi) selectMenu(mi);
+});
+document.getElementById('listLnk').onclick=function(){
+  document.querySelector('.tb[data-native="plist"]').click();
+};
+
+/* ---------------- Patient Search dialog ---------------- */
+var PCF=['pcf1','pcf2','pcf3','pcf4','pcf5','pcf6','pcf7'];   /* SSN, Last, First, DOB, MRN, FIN, Sex */
+function clearFields(){ PCF.forEach(function(id){document.getElementById(id).value=''}); }
+function clearResults(){
+  personPane.innerHTML='<div class="emptymsg">No persons found.</div>';
+  encPane.innerHTML='<div class="emptymsg">No encounters found.</div>';
+  selPerson=null; selEnc=null; btnOk.disabled=true;
+}
+function openDlg(prefill){
+  clearFields(); clearResults();
+  hint.textContent='Enter search criteria, then click Search.';
+  veil.classList.add('show'); dlg.classList.add('show');
+  var focusId='pcf2';
+  if(prefill){
+    if(qualifier==='MRN'){document.getElementById('pcf5').value=prefill;focusId='pcf5';}
+    else if(qualifier==='FIN NBR'){document.getElementById('pcf6').value=prefill;focusId='pcf6';}
+    else if(qualifier==='SSN'){document.getElementById('pcf1').value=prefill;focusId='pcf1';}
+    else {document.getElementById('pcf2').value=prefill;}
+    runSearch();
+  }
+  document.getElementById(focusId).focus();
+}
+function closeDlg(){ veil.classList.remove('show'); dlg.classList.remove('show'); }
+document.getElementById('dlgX').onclick=closeDlg;
+document.getElementById('btnCancel').onclick=closeDlg;
+document.getElementById('btnReset').onclick=function(){ clearFields(); clearResults(); };
+
+function runSearch(){
+  var v=function(id){return document.getElementById(id).value.trim().toLowerCase()};
+  var last=v('pcf2'), first=v('pcf3'), dob=document.getElementById('pcf4').value.trim(),
+      mrn=v('pcf5'), fin=v('pcf6'), sex=v('pcf7');
+  var any=last||first||dob||mrn||fin||sex;
+  var hits=!any?[]:PATIENTS.filter(function(p){
+    if(mrn && p.mrn.toLowerCase().indexOf(mrn)!==0) return false;
+    if(last && p.last.toLowerCase().indexOf(last)!==0) return false;
+    if(first && p.first.toLowerCase().indexOf(first)!==0) return false;
+    if(dob && p.dob!==dob) return false;
+    if(sex && p.sex.toLowerCase()!==sex) return false;
+    if(fin && !p.enc.some(function(e){return e.fin.toLowerCase().indexOf(fin)===0})) return false;
+    return true;
+  });
+  clearResults();
+  if(!hits.length){
+    hint.textContent=any?'No persons matched. Broaden the criteria.':'Enter search criteria, then click Search.';
+    return;
+  }
+  var h='<table class="dgrid"><thead><tr><th>EMPI</th><th>Name</th><th>MRN</th><th>Sex</th><th>DOB</th><th>Age</th>'+
+        '<th>Address</th><th>Phone</th><th>Maiden Name</th></tr></thead><tbody>';
+  hits.forEach(function(p){
+    h+='<tr data-i="'+PATIENTS.indexOf(p)+'"><td>'+p.empi+'</td><td>'+fullName(p)+'</td><td>'+p.mrn+'</td>'+
+       '<td>'+p.sex+'</td><td>'+p.dob+'</td><td>'+p.age+'</td><td>'+p.addr+'</td><td>'+p.phone+'</td><td></td></tr>';
+  });
+  personPane.innerHTML=h+'</tbody></table>';
+  hint.textContent=hits.length+' person'+(hits.length===1?'':'s')+' found. Select a person, then an encounter.';
+  if(hits.length===1) personPane.querySelector('tr[data-i]').click();
+}
+document.getElementById('btnSearch').onclick=runSearch;
+dlg.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); if(selEnc) commit(); else runSearch(); } if(e.key==='Escape') closeDlg(); });
+
+personPane.addEventListener('click',function(e){
+  var tr=e.target.closest('tr[data-i]'); if(!tr) return;
+  personPane.querySelectorAll('tr').forEach(function(n){n.classList.remove('sel')});
+  tr.classList.add('sel');
+  selPerson=PATIENTS[+tr.dataset.i]; selEnc=null; btnOk.disabled=true;
+  var h='<table class="dgrid"><thead><tr><th>FIN</th><th>Facility</th><th>Enc Type</th><th>Med Service</th>'+
+        '<th>Reason For Visit</th><th>Est Arrival Date</th><th>Admit Date</th><th>Disch Date</th>'+
+        '<th>Attending Physician</th></tr></thead><tbody>';
+  selPerson.enc.forEach(function(en,i){
+    h+='<tr data-e="'+i+'"><td>'+en.fin+'</td><td>'+en.fac+'</td><td>'+en.type+'</td><td>'+en.svc+'</td>'+
+       '<td>'+en.reason+'</td><td>'+(en.est||'')+'</td><td>'+en.admit+'</td><td>'+(en.disch||'')+'</td>'+
+       '<td>'+en.attend+'</td></tr>';
+  });
+  encPane.innerHTML=h+'</tbody></table>';
+  hint.textContent='Select the encounter to open for '+fullName(selPerson)+'.';
+});
+encPane.addEventListener('click',function(e){
+  var tr=e.target.closest('tr[data-e]'); if(!tr) return;
+  encPane.querySelectorAll('tr').forEach(function(n){n.classList.remove('sel')});
+  tr.classList.add('sel'); selEnc=selPerson.enc[+tr.dataset.e]; btnOk.disabled=false;
+  hint.textContent='Encounter '+selEnc.fin+' selected. Click OK to open the chart.';
+});
+encPane.addEventListener('dblclick',function(e){ if(e.target.closest('tr[data-e]')) commit(); });
+function commit(){ if(!selPerson||!selEnc) return; closeDlg(); openChart(selPerson,selEnc); qbox.value=''; syncPh(); }
+btnOk.onclick=commit;
+
+/* ---------------- toolbar search cluster ---------------- */
+document.getElementById('magBtn').onclick=function(){ openDlg(qbox.value.trim()); };
+function syncPh(){ qph.style.display=qbox.value?'none':'block'; }
+qbox.addEventListener('input',syncPh);
+qbox.addEventListener('keydown',function(e){ if(e.key==='Enter') openDlg(qbox.value.trim()); });
+
+function placePop(pop,anchor,alignRight){
+  var r=anchor.getBoundingClientRect();
+  pop.style.top=(r.bottom+2)+'px';
+  if(alignRight) pop.style.left=Math.max(6,r.right-pop.offsetWidth)+'px';
+  else pop.style.left=r.left+'px';
+}
+document.getElementById('recentBtn').onclick=function(e){
+  e.stopPropagation(); qualPop.classList.remove('show');
+  var h='<div class="pi hdr">Recent Persons</div>';
+  if(!recent.length) h+='<div class="pi" style="color:#8a949d">No recent patients</div>';
+  recent.forEach(function(p,i){ h+='<div class="pi" data-r="'+i+'">'+fullName(p)+'<span class="mrn">'+p.mrn+'</span></div>'; });
+  recentPop.innerHTML=h; recentPop.classList.add('show'); placePop(recentPop,this,true);
+};
+recentPop.addEventListener('click',function(e){
+  var it=e.target.closest('[data-r]'); if(!it) return;
+  recentPop.classList.remove('show'); openChart(recent[+it.dataset.r]);
+});
+document.getElementById('qualBtn').onclick=function(e){
+  e.stopPropagation(); recentPop.classList.remove('show');
+  qualPop.classList.add('show'); placePop(qualPop,this,true);
+};
+qualPop.addEventListener('click',function(e){
+  var it=e.target.closest('[data-q]'); if(!it) return;
+  qualifier=it.dataset.q; qph.textContent=qualifier; qualPop.classList.remove('show'); qbox.focus();
+});
+document.addEventListener('click',function(){ recentPop.classList.remove('show'); qualPop.classList.remove('show'); });
+
+/* ---------------- messages from the MPage iframe ---------------- */
+window.addEventListener('message',function(e){
+  var d=e.data||{};
+  if(d.type==='openChart'){
+    var p=PATIENTS.filter(function(x){return x.mrn===d.mrn})[0];
+    if(p) openChart(p);
+  }
+  if(d.type==='patientSearch'){ openDlg(d.text||''); }
+  if(d.type==='goOrganizer'){ document.getElementById('btnMedBeacon').click(); }
+});
+
+/* ---------------- browser toolbar ---------------- */
+var zoom=100;
+function applyZoom(){
+  document.getElementById('zoomVal').textContent=zoom+'%';
+  try{ frame.contentWindow.postMessage({type:'zoom',value:zoom},'*'); }catch(err){}
+}
+document.getElementById('zoomIn').onclick=function(){zoom=Math.min(200,zoom+10);applyZoom();};
+document.getElementById('zoomOut').onclick=function(){zoom=Math.max(50,zoom-10);applyZoom();};
+document.getElementById('btnHome').onclick=function(){ document.getElementById('btnMedBeacon').click(); };
+document.getElementById('btnBack').onclick=function(){ try{frame.contentWindow.history.back();}catch(err){} };
+document.getElementById('btnStop').onclick=function(){ try{frame.contentWindow.location.reload();}catch(err){frame.src=frame.src;} touchRefresh(); };
+
+/* ---------------- demo helper ---------------- */
+var hidden=false;
+document.getElementById('chromeToggle').onclick=function(){
+  hidden=!hidden;
+  ['.titlebar','.menubar','.toolbar','.navyband','.orghead','.ietb','.banner','.mpane'].forEach(function(s){
+    document.querySelectorAll(s).forEach(function(n){ n.style.display=hidden?'none':''; });
+  });
+  this.textContent=hidden?'Show chrome':'Hide chrome';
+};
+
+/* ================= Message Center ================= */
+var MCROWS=[
+ ['100254871','Abnormal','Auth (Verified)','Micro','Inpatient','Critical Results','Blood culture x2 &#183; prelim','MICRO Blood Culture','08/24/2026 13:50','08/24/2026 14:02'],
+ ['100327019','Abnormal','In Process','Lab','Inpatient','Late Posting L...','Lactic acid 2.2 mmol/L','LAB Lactic Acid','08/24/2026 11:18','08/24/2026 11:44'],
+ ['100318844','Abnormal','Auth (Verified)','Radiology','Inpatient','Subscribed','Portable chest, 1 view','RAD Chest 1 View','08/24/2026 06:31','08/24/2026 07:12'],
+ ['100290117','','Auth (Verified)','Lab','Inpatient','Subscribed','Renal panel','LAB Basic Metabolic Panel','08/24/2026 05:02','08/24/2026 05:40'],
+ ['100341870','','In Process','Radiology','Observation','Late Posting L...','Echocardiogram, complete','NIL Echocardiogram','08/23/2026 16:22','08/24/2026 08:05']
+];
+/* orders waiting on a physician signature. mb:true came from a MedBeacon proposal */
+var MCORDERS=[
+ {mrn:'100254871',name:'Lactate Level',act:'Order',det:'Blood, STAT, then q2h x2',cmt:'MedBeacon sepsis proposal, awaiting cosign',org:'MEDBEACON, SYSTEM',cr:'08/24/2026 14:31',stop:'08/24/2026 22:31',st:'Physician Stop',mb:1},
+ {mrn:'100254871',name:'Blood Culture x2',act:'Order',det:'Blood, STAT, 2 sites, before antibiotics',cmt:'MedBeacon sepsis proposal, awaiting cosign',org:'MEDBEACON, SYSTEM',cr:'08/24/2026 14:31',stop:'',st:'',mb:1},
+ {mrn:'100254871',name:'Vancomycin',act:'Order',det:'IV, q12h, dose per pharmacy',cmt:'MedBeacon sepsis proposal, awaiting cosign',org:'MEDBEACON, SYSTEM',cr:'08/24/2026 14:31',stop:'08/27/2026 14:31',st:'Physician Stop',mb:1},
+ {mrn:'100254871',name:'Lactated Ringers',act:'Order',det:'2,172 mL IV bolus (30 mL/kg)',cmt:'MedBeacon sepsis proposal, awaiting cosign',org:'MEDBEACON, SYSTEM',cr:'08/24/2026 14:31',stop:'',st:'',mb:1},
+ {mrn:'100254871',name:'CBC with Differential',act:'Order',det:'Blood, STAT',cmt:'MedBeacon sepsis proposal, awaiting cosign',org:'MEDBEACON, SYSTEM',cr:'08/24/2026 14:31',stop:'',st:'',mb:1},
+ {mrn:'100318844',name:'Norepinephrine',act:'Order',det:'Titrate to MAP 65 mmHg',cmt:'MedBeacon sepsis proposal, awaiting cosign',org:'MEDBEACON, SYSTEM',cr:'08/24/2026 09:12',stop:'',st:'Physician Stop',mb:1},
+ {mrn:'100318844',name:'Notify Treating Provider',act:'Order',det:'If MAP &lt; 65 mmHg',cmt:'',org:'Delgado, Priya S, RN',cr:'08/24/2026 08:40',stop:'08/25/2026 08:40',st:'Physician Stop',mb:0},
+ {mrn:'100277203',name:'PSO Admit to Inpatient',act:'Order',det:'08/22/26 19:4...',cmt:'Inpatient Req...',org:'Okafor, Ben T, PharmD',cr:'08/22/2026 19:44',stop:'08/22/2026 19:44',st:'Physician Stop',mb:0},
+ {mrn:'100277203',name:'Enteral Water Flush',act:'Order',det:'250 mL q4h',cmt:'Clean site arou...',org:'Delgado, Priya S, RN',cr:'08/23/2026 11:32',stop:'',st:'',mb:0},
+ {mrn:'100309556',name:'Head of Bed',act:'Order',det:'Elevate 30 degrees',cmt:'',org:'Delgado, Priya S, RN',cr:'08/23/2026 11:32',stop:'',st:'',mb:0},
+ {mrn:'100309556',name:'Intake and Output',act:'Order',det:'Every shift',cmt:'',org:'Delgado, Priya S, RN',cr:'08/23/2026 11:32',stop:'',st:'',mb:0},
+ {mrn:'100322450',name:'Comprehensive Metabolic Panel',act:'Order',det:'Blood, Routine, AM draw',cmt:'',org:'Delgado, Priya S, RN',cr:'08/23/2026 11:33',stop:'08/24/2026 03:00',st:'Physician Stop',mb:0},
+ {mrn:'100334102',name:'Diet Clear Liquid',act:'Order',det:'Advance as tolerated',cmt:'',org:'Kaminski, Ruth, RD',cr:'08/23/2026 16:52',stop:'08/24/2026 16:52',st:'Physician Stop',mb:0},
+ {mrn:'100298433',name:'Phosphorus Level',act:'Discontinue',det:'Blood, AM draw',cmt:'',org:'Delgado, Priya S, RN',cr:'08/23/2026 11:31',stop:'',st:'',mb:0},
+ {mrn:'100327019',name:'Stroke Heparin Titration Protocol',act:'Order',det:'Total volume 2...',cmt:'Titrate to aPTT',org:'Delgado, Priya S, RN',cr:'08/23/2026 23:01',stop:'08/26/2026 23:01',st:'Physician Stop',mb:0}
+];
+var mcNode='Results FYI', mcSigned=[], coSel=-1;
+function unsignedOrders(){ return MCORDERS.filter(function(r,i){ return mcSigned.indexOf(i)<0; }); }
+function ordersNode(){ return mcNode==='Orders'||mcNode==='Cosign Orders'; }
+function ptName(mrn){ var p=PATIENTS.filter(function(x){return x.mrn===mrn})[0]; return p?fullName(p):mrn; }
+
+function mcTools(orders){
+  var b=[['#i-chat','Communicate <span class="chev">&#9660;</span>',1],['#i-folder','Open',1],
+         ['#i-doc','Message Journal',1],['#i-page','Review All',1],['#i-page','Forward Only',1],
+         ['SEP','',0],['#i-patient','Select Patient',0],['#i-expand','Select All',1]];
+  if(!orders) b.push(['#i-clip','Result Journal',1]);
+  return b.map(function(x){
+    if(x[0]==='SEP') return '<div class="vsep"></div>';
+    return '<div class="mcb'+(x[2]?' off nofn':'')+'"'+(x[1]==='Select Patient'?' id="mcSelPt"':'')+
+      '><svg class="ico" style="width:16px;height:16px"><use href="'+x[0]+'"/></svg>'+x[1]+'</div>';
+  }).join('');
+}
+function renderMc(){
+  var orders=ordersNode(), h;
+  document.getElementById('mcTabName').textContent=mcNode;
+  document.getElementById('mcBar').innerHTML=mcTools(orders);
+  document.getElementById('mcSelPt').onclick=function(){ openDlg(''); };
+
+  if(orders){
+    var rows=unsignedOrders();
+    h='<table class="pvgrid mcgrid"><thead><tr>'+
+      ['Patient Name','Order/Plan Name','Order Action','Details','Order Comment','Originator Name','Create Date','Stop Date','Stop Type']
+        .map(function(c){return '<th>'+c+'</th>'}).join('')+'</tr></thead><tbody>';
+    rows.forEach(function(r){
+      var i=MCORDERS.indexOf(r);
+      h+='<tr data-row="'+i+'"'+(i===coSel?' class="sel"':'')+'>'+
+         '<td><b class="un" data-mrn="'+r.mrn+'">'+ptName(r.mrn)+'</b></td>'+
+         '<td><b>'+r.name+'</b></td>'+
+         '<td>'+r.act+'</td><td>'+r.det+'</td><td>'+r.cmt+'</td><td>'+r.org+'</td>'+
+         '<td>'+r.cr+'</td><td>'+r.stop+'</td><td>'+r.st+'</td></tr>';
+    });
+    if(!rows.length) h+='<tr><td colspan="9" style="padding:20px;color:#8a949d">Nothing left to cosign in this folder.</td></tr>';
+    document.getElementById('mcWrap').innerHTML=h+'</tbody></table>';
+    document.getElementById('mcFoot').style.display='flex';
+    document.getElementById('mcFoot').innerHTML=
+      '<span class="fh">'+rows.length+' order'+(rows.length===1?'':'s')+' awaiting cosignature'+
+      (mcSigned.length?' &#183; '+mcSigned.length+' actioned this session':'')+
+      ' &#183; double-click a line, or select it and click Open, to review</span><span class="sp"></span>'+
+      '<button class="wbn def" id="mcOpen"'+(coSel<0?' disabled':'')+'>Open</button>';
+  } else {
+    h='<table class="pvgrid mcgrid"><thead><tr>'+
+      ['Patient Name','Abnormal','Result Status','Result Type','Encounter Type','Subscription','Details','Subject','Create Date','Update Date']
+        .map(function(c){return '<th>'+c+'</th>'}).join('')+'</tr></thead><tbody>';
+    MCROWS.forEach(function(r){
+      var p=PATIENTS.filter(function(x){return x.mrn===r[0]})[0]; if(!p) return;
+      h+='<tr><td><b class="un" data-mrn="'+p.mrn+'" style="cursor:pointer">'+fullName(p)+'</b></td>'+
+         '<td'+(r[1]?' class="ab"':'')+'>'+r[1]+'</td>'+
+         r.slice(2).map(function(c){return '<td>'+c+'</td>'}).join('')+'</tr>';
+    });
+    document.getElementById('mcWrap').innerHTML=h+'</tbody></table>';
+    document.getElementById('mcFoot').style.display='none';
+  }
+  var n=unsignedOrders().length;
+  document.getElementById('mcnOrders').textContent='Orders ('+n+'/'+n+')';
+  document.getElementById('mcnCosign').textContent='Cosign Orders ('+n+'/'+n+')';
+}
+mcView.addEventListener('click',function(e){
+  var n=e.target.closest('.mcn');
+  if(n&&n.classList.contains('nofn')) return;
+  if(n){ mcView.querySelectorAll('.mcn').forEach(function(x){x.classList.remove('on')});
+         n.classList.add('on'); mcNode=n.dataset.mc; coSel=-1; renderMc(); return; }
+  if(e.target.closest('#mcOpen')){ if(coSel>=0) openCo(coSel); return; }
+  var b=e.target.closest('[data-mrn]');
+  if(b){ var p=PATIENTS.filter(function(x){return x.mrn===b.dataset.mrn})[0]; if(p) openChart(p); return; }
+  var tr=e.target.closest('tr[data-row]');
+  if(tr){ coSel=+tr.dataset.row; renderMc(); }
+});
+mcView.addEventListener('dblclick',function(e){
+  var tr=e.target.closest('tr[data-row]'); if(tr){ coSel=+tr.dataset.row; openCo(coSel); }
+});
+
+/* ---- Cosign review window: Approve / Refuse with a Reason, OK & Close / OK & Next ---- */
+var coDlg=document.getElementById('coDlg'), coIdx=-1;
+var REFUSE=['Not clinically indicated','Duplicate order','Patient allergy or contraindication',
+            'Incorrect dose or route','Discuss with ordering clinician first'];
+function openCo(i){
+  var r=MCORDERS[i]; if(!r) return;
+  coIdx=i;
+  document.getElementById('coName').textContent=r.name;
+  document.getElementById('coBody').innerHTML=
+    [['Patient',ptName(r.mrn)],['Order/Plan Name',r.name],['Order Action',r.act],['Details',r.det],
+     ['Order Comment',r.cmt||'&nbsp;'],['Originator Name',r.org],['Create Date',r.cr],
+     ['Stop Date',r.stop||'&nbsp;'],['Stop Type',r.st||'&nbsp;']]
+      .map(function(f){return '<div class="cof"><b>'+f[0]+'</b><i>'+f[1]+'</i></div>'}).join('');
+  document.getElementById('coAction').value='Approve';
+  document.getElementById('coReason').innerHTML=REFUSE.map(function(x){return '<option>'+x+'</option>'}).join('');
+  document.getElementById('coComment').value='';
+  syncCo();
+  veil.classList.add('show'); coDlg.classList.add('show');
+}
+function syncCo(){
+  var refuse=document.getElementById('coAction').value==='Refuse';
+  document.getElementById('coReasonRow').style.display=refuse?'flex':'none';
+  document.getElementById('coWarn').style.display=refuse?'block':'none';
+}
+document.getElementById('coAction').onchange=syncCo;
+function coCommit(next){
+  if(coIdx>=0 && mcSigned.indexOf(coIdx)<0) mcSigned.push(coIdx);
+  coSel=-1; renderMc();
+  var left=unsignedOrders();
+  if(next && left.length){ openCo(MCORDERS.indexOf(left[0])); return; }
+  closeCo();
+}
+function closeCo(){ veil.classList.remove('show'); coDlg.classList.remove('show'); coIdx=-1; renderMc(); }
+document.getElementById('coClose').onclick=function(){ coCommit(false); };
+document.getElementById('coNext').onclick=function(){ coCommit(true); };
+document.getElementById('coCancel').onclick=closeCo;
+document.getElementById('coX').onclick=closeCo;
+
+/* ================= native chart view: Internal Medicine View ================= */
+var PVNAV=[['cc','Chief Complaint',0],['doc','Documents',0],
+ ['vit','Vital Signs',0],['prob','Problem List',0],['hmed','Home Medications',0],
+ ['med','Medications',1],['lab','Labs',0],['img','Imaging',1],['path','Pathology',1],
+ ['mic','Microbiology',0],['hist','Histories',1],['io','Intake and Output',1],
+ ['hpi','Subjective/History of Present Illness',1],['pe','Objective/Physical Exam',1],
+ ['ros','Review of Systems',1],['ord','Order Profile',1],['noe','New Order Entry',1],
+ ['vis','Visits',1],['ap','Assessment and Plan',0],['ci','Clinical Images',1]];
+function segs(a){ return '<span class="segs">'+a.map(function(t,i){return '<span class="seg'+(i===0?' on':'')+'">'+t+'</span>'}).join('')+'</span>'; }
+function sec(id,title,count,right,body){
+  return '<div class="pvsec" id="pvs-'+id+'"><div class="pvh"><h2>'+title+'</h2>'+
+    (count?'<span class="cnt">('+count+')</span>':'')+'<span class="sp"></span>'+(right||'')+
+    '<span class="ic">&#8635;</span><span class="ic">&#9776;</span></div>'+body+'</div>';
+}
+function renderPv(){
+  if(!activeChart) return;
+  var p=activeChart.p, e=activeChart.enc, docs=docsFor(p), H='';
+
+  document.getElementById('pvNav').innerHTML=PVNAV.map(function(n){
+    var lbl=n[1]+(n[0]==='doc'?' ('+docs.filter(function(d){return d[0]!=='GROUP'}).length+')'
+              :n[0]==='hmed'&&p.meds.length?' ('+p.meds.length+')':'');
+    return '<div class="pvni'+(n[0]==='cc'?' on':'')+(n[2]?' nofn':'')+'" data-s="'+n[0]+'">'+lbl+(n[2]?' <span class="el">&#8230;</span>':'')+'</div>';
+  }).join('');
+
+  /* MedBeacon link strip, pinned above the chart content */
+  var cls=p.score>=80?'':(p.score>=55?' md':' lo');
+  H+='<div class="mbstrip'+cls+'" id="pvOpenMb"><span class="sc">'+p.score+'</span>'+
+     '<span class="lb">MedBeacon sepsis risk</span>'+
+     '<span class="ds">'+(p.score>=80?'elevated, rising over the last 4 hours'
+       :p.score>=55?'moderate, watch the trend':'low')+' &#183; scored '+hhmm()+'</span>'+
+     '<span class="sp"></span><span class="go">Open in MedBeacon &#8250;</span></div>';
+
+  /* Chief Complaint */
+  H+=sec('cc','Chief Complaint','','<span class="seg">Selected visit</span>',
+    '<div class="pvfree">'+(p.cc||e.reason)+'</div><div class="pvby">'+e.attend+'&nbsp;&nbsp;'+e.admit+'</div>');
+
+  /* Documents */
+  var dh='<div class="pvfilt"><label><input type="checkbox" disabled> My notes only</label>'+
+         '<label><input type="checkbox" disabled> Group by encounter</label>'+
+         '<span class="dv">Display: Physician Documentation <span class="ar">&#9660;</span></span></div>'+
+         '<table class="pvgrid"><thead><tr><th>Time of Service</th><th>Subject</th><th>Note Type</th>'+
+         '<th>Author</th><th>Last Updated</th><th>Last Updated By</th></tr></thead><tbody>';
+  docs.forEach(function(d){
+    if(d[0]==='GROUP'){ dh+='<tr class="grp"><td colspan="6">'+d[1]+'</td></tr>'; return; }
+    dh+='<tr><td>'+d[0]+'</td><td class="un">'+d[1]+'</td><td>'+d[2]+'</td><td>'+d[3]+'</td><td>'+d[0]+'</td><td>'+d[3]+'</td></tr>';
+  });
+  dh+='</tbody></table><div class="pvnote">* Displaying up to the last 50 recent notes for all visits</div>';
+  H+=sec('doc','Documents',docs.filter(function(d){return d[0]!=='GROUP'}).length,
+    segs(['Last 50 Notes','All Visits','Last 24 hours','More'])+'<span class="plus">&#43;</span>',dh);
+
+  /* Vital Signs */
+  var vt=vitalsFor(p),
+      vh='<table class="pvgrid"><thead><tr><th>Result</th><th>'+hhmm(14)+'</th><th>10:00</th><th>06:00</th><th>Units</th></tr></thead><tbody>';
+  vt.forEach(function(v){
+    vh+='<tr><td>'+v[0]+'</td><td'+(v[5]?' class="ab"':'')+'>'+v[1]+'</td><td>'+v[2]+'</td><td>'+v[3]+'</td><td>'+v[4]+'</td></tr>';
+  });
+  H+=sec('vit','Vital Signs','',segs(['Latest*','Last 7 days','Last 24 hours','More']),vh+'</tbody></table>');
+
+  /* Problem List */
+  var ph='';
+  if(p.dx.length){
+    ph='<table class="pvgrid"><thead><tr><th>Problem</th><th>Classification</th><th>Onset</th><th>Recorded By</th></tr></thead><tbody>'+
+      p.dx.map(function(d){return '<tr><td class="un">'+d[0]+'</td><td>'+d[1]+'</td><td>'+d[2]+'</td><td>'+d[3]+'</td></tr>'}).join('')+
+      '</tbody></table>';
+  } else ph='<div class="pvempty">No results found</div>';
+  H+=sec('prob','Problem List','',segs(['Active','All','Chronic'])+'<span class="plus">&#43;</span>',ph);
+
+  /* Home Medications */
+  var mh=p.meds.length
+    ? '<table class="pvgrid"><thead><tr><th>Medication</th><th>Sig</th><th>Status</th></tr></thead><tbody>'+
+      p.meds.map(function(m){return '<tr><td class="un">'+m[0]+'</td><td>'+m[1]+'</td><td>'+m[2]+'</td></tr>'}).join('')+'</tbody></table>'
+    : '<div class="pvempty">No results found</div>';
+  H+=sec('hmed','Home Medications',p.meds.length,segs(['Active','All']),mh);
+
+  /* Labs */
+  var lh='<table class="pvgrid"><thead><tr><th>Test</th><th>Result</th><th>Units</th><th>Reference Range</th><th>Collected</th></tr></thead><tbody>'+
+    labsFor(p).map(function(l){
+      return '<tr><td>'+l[0]+'</td><td'+(l[4]?' class="ab"':'')+'>'+l[1]+'</td><td>'+l[2]+'</td><td>'+l[3]+'</td><td>08/24/26 06:10</td></tr>';
+    }).join('')+'</tbody></table>';
+  H+=sec('lab','Labs','',segs(['Last 48 hours','Last 7 days','All']),lh);
+
+  /* Microbiology */
+  var ch=p.micro.length
+    ? '<table class="pvgrid"><thead><tr><th>Order</th><th>Collected</th><th>Status</th><th>Result</th></tr></thead><tbody>'+
+      p.micro.map(function(m){return '<tr><td class="un">'+m[0]+'</td><td>'+m[1]+'</td><td>'+m[2]+'</td><td>'+m[3]+'</td></tr>'}).join('')+'</tbody></table>'
+    : '<div class="pvempty">No results found</div>';
+  H+=sec('mic','Microbiology','',segs(['Last 7 days','All']),ch);
+
+  /* Assessment and Plan */
+  H+=sec('ap','Assessment and Plan','','<span class="plus">&#43;</span>',
+    '<div class="pvempty">No documented assessment for this visit.</div>');
+
+  var m=document.getElementById('pvMain'); m.innerHTML=H; m.scrollTop=0;
+}
+document.getElementById('pvNav').addEventListener('click',function(e){
+  var n=e.target.closest('.pvni'); if(!n||n.classList.contains('nofn')) return;
+  document.getElementById('pvNav').querySelectorAll('.pvni').forEach(function(x){x.classList.remove('on')});
+  n.classList.add('on');
+  var t=document.getElementById('pvs-'+n.dataset.s);
+  if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
+});
+document.getElementById('pvMain').addEventListener('click',function(e){
+  if(e.target.closest('#pvOpenMb')) selectMenu(document.getElementById('miMedBeacon'));
+});
+
+/* ================= Patient List ================= */
+var PLISTS=[
+  {name:'MC 5W',type:'Location',unit:'MC 5W'},
+  {name:'My Patients',type:'Custom',members:['100254871','100318844','100290117']}
+];
+var activeIdx=[0,1], curTab=0;
+var mplDlg=document.getElementById('mplDlg'),
+    pltDlg=document.getElementById('pltDlg'),
+    plocDlg=document.getElementById('plocDlg');
+var TREE=[{fac:'Memorial Central',units:['MC 4W','MC 5W','MC 6E','MC ICU','MC ED']},
+          {fac:'Memorial North',units:['MN 2E','MN 3W']}];
+var FILTERS=['Locations','Medical Services','Encounter Types','Care Teams','Relationships','Time Criteria'];
+var TYPES=['Assignment','Census','Custom','Location','Medical Service','Provider Group','Query','Relationship','Scheduled'];
+var selAvail=-1, selActive=-1, selType=-1, checkedUnit=null, openFac={0:true};
+
+function unitOf(p){ return p.enc[0].loc.split(' / ')[0]; }
+function bedOf(p){ return p.enc[0].loc.split(' / ').slice(1).join(' '); }
+function losOf(p){
+  var m=p.enc[0].admit.match(/(\d\d)\/(\d\d)\/(\d{4})/); if(!m) return '';
+  var n=Math.max(0,Math.round((Date.now()-new Date(+m[3],+m[1]-1,+m[2]))/86400000));
+  return n+(n===1?' day':' days');
+}
+function listPatients(L){
+  return PATIENTS.filter(function(p){
+    if(p.enc[0].disch) return false;
+    return L.type==='Location' ? unitOf(p)===L.unit : (L.members||[]).indexOf(p.mrn)>=0;
+  });
+}
+function critLine(L){
+  return L.type==='Location'
+    ? 'Location: '+L.unit+' - Emergency, Inpatient, Observation - Active encounters'
+    : 'Admitting Physician, Attending Physician, Consulting Physician - Emergency, Inpatient, Observati...';
+}
+function renderPl(){
+  var tabs=activeIdx.map(function(i,n){
+    return '<div class="pltab'+(n===curTab?' on':'')+'" data-t="'+n+'">'+PLISTS[i].name+'</div>';
+  }).join('');
+  var L=PLISTS[activeIdx[curTab]], rows=L?listPatients(L):[], g, foot='', crit='';
+  if(!rows.length){
+    g='<div class="plempty">No patients on this list.<br><br>Click the wrench at the top left to add one.</div>';
+  } else {
+    crit='<div class="plcrit">'+critLine(L)+'</div>';
+    g='<table class="plgrid"><thead><tr><th>Location</th><th style="width:22px"></th><th>Name</th>'+
+      '<th>Length of Stay</th><th>MRN</th><th>FIN</th><th>Age</th><th>DOB</th><th>Admitted</th>'+
+      '<th>Admitting Physician</th><th>Visit Reason</th><th>Primary Care Physician</th></tr></thead><tbody>';
+    rows.forEach(function(p){
+      var e=p.enc[0];
+      g+='<tr data-mrn="'+p.mrn+'"><td>'+e.loc.replace(/ \/ /g,' ')+' 0</td>'+
+         '<td><svg width="14" height="14"><use href="#i-clip"/></svg></td>'+
+         '<td class="nm">'+fullName(p)+'</td><td>'+losOf(p)+'</td><td>'+p.mrn+'</td><td>'+e.fin+'</td>'+
+         '<td>'+p.age.replace(' Years',' years')+'</td><td>'+p.dob+'</td><td>'+e.admit+'</td>'+
+         '<td>'+e.admitting+'</td><td>'+e.reason+'</td><td>'+p.pcp+'</td></tr>';
+    });
+    g+='</tbody></table>';
+    foot='<div class="plfoot">'+rows.length+' patients'+(L.type==='Location'?' · live census, updates on admit, transfer and discharge':'')+
+         ' · double-click a row to open the chart</div>';
+  }
+  plView.innerHTML='<div class="pltabs">'+tabs+'</div>'+crit+'<div class="plwrap">'+g+'</div>'+foot;
+}
+plView.addEventListener('click',function(e){
+  var t=e.target.closest('.pltab');
+  if(t){ curTab=+t.dataset.t; renderPl(); return; }
+  var tr=e.target.closest('tr[data-mrn]');
+  if(tr){ plView.querySelectorAll('tr[data-mrn]').forEach(function(n){n.classList.remove('sel')}); tr.classList.add('sel'); }
+});
+plView.addEventListener('dblclick',function(e){
+  var tr=e.target.closest('tr[data-mrn]'); if(!tr) return;
+  var p=PATIENTS.filter(function(x){return x.mrn===tr.dataset.mrn})[0]; if(p) openChart(p);
+});
+document.getElementById('plAddPt').onclick=function(){ openDlg(''); };
+
+/* ---- dialog plumbing ---- */
+function closeLists(){ veil.classList.remove('show'); [mplDlg,pltDlg,plocDlg].forEach(function(d){d.classList.remove('show')}); }
+document.addEventListener('click',function(e){ if(e.target.closest('[data-close-dlg]')) closeLists(); });
+
+function showDlg(d){ [mplDlg,pltDlg,plocDlg].forEach(function(x){x.classList.remove('show')}); veil.classList.add('show'); d.classList.add('show'); }
+
+function renderMpl(){
+  document.getElementById('availBox').innerHTML=PLISTS.map(function(L,i){
+    return '<div class="li'+(i===selAvail?' on':'')+'" data-a="'+i+'">'+L.name+'</div>';}).join('');
+  document.getElementById('activeBox').innerHTML=activeIdx.map(function(i,n){
+    return '<div class="li'+(n===selActive?' on':'')+'" data-c="'+n+'">'+PLISTS[i].name+'</div>';}).join('');
+}
+document.getElementById('wrenchBtn').onclick=function(){ selAvail=-1;selActive=-1;renderMpl();showDlg(mplDlg); };
+mplDlg.addEventListener('click',function(e){
+  var a=e.target.closest('[data-a]'), c=e.target.closest('[data-c]');
+  if(a){ selAvail=+a.dataset.a; selActive=-1; renderMpl(); }
+  if(c){ selActive=+c.dataset.c; selAvail=-1; renderMpl(); }
+});
+document.getElementById('mplAdd').onclick=function(){
+  if(selAvail<0||activeIdx.indexOf(selAvail)>=0) return;
+  activeIdx.push(selAvail); selAvail=-1; renderMpl();
+};
+document.getElementById('mplRemove').onclick=function(){
+  if(selActive<0) return; activeIdx.splice(selActive,1); selActive=-1; renderMpl();
+};
+document.getElementById('mplOk').onclick=function(){
+  closeLists(); if(curTab>=activeIdx.length) curTab=0; renderPl();
+};
+
+/* ---- Patient List Type ---- */
+document.getElementById('mplNew').onclick=function(){
+  selType=-1; renderTypes(); document.getElementById('pltNext').disabled=true; showDlg(pltDlg);
+};
+function renderTypes(){
+  document.getElementById('typeBox').innerHTML=TYPES.map(function(t,i){
+    return '<div class="li'+(i===selType?' on':'')+'" data-ty="'+i+'">'+t+'</div>';}).join('');
+}
+pltDlg.addEventListener('click',function(e){
+  var t=e.target.closest('[data-ty]'); if(!t) return;
+  selType=+t.dataset.ty; renderTypes();
+  var isLoc=TYPES[selType]==='Location';
+  document.getElementById('pltNext').disabled=!isLoc;
+  document.getElementById('typeNote').textContent=isLoc
+    ? 'Location builds a live census of every patient on a unit.'
+    : TYPES[selType]+' is a real PowerChart list type, but only Location is wired up in this mock.';
+});
+document.getElementById('pltNext').onclick=function(){
+  checkedUnit=null; document.getElementById('listName').value='';
+  document.getElementById('plocFinish').disabled=true;
+  renderFilters(); renderTree(); showDlg(plocDlg);
+};
+
+/* ---- Location wizard ---- */
+function renderFilters(){
+  document.getElementById('filtBox').innerHTML=FILTERS.map(function(f,i){
+    return '<div class="li'+(i===0?' on':'')+'">'+f+'</div>';}).join('');
+}
+function renderTree(){
+  var h='';
+  TREE.forEach(function(g,fi){
+    h+='<div class="tnode" data-fac="'+fi+'"><span class="tw">'+(openFac[fi]?'&#9660;':'&#9654;')+'</span>&#128193; '+g.fac+'</div>';
+    if(openFac[fi]) g.units.forEach(function(u){
+      h+='<div class="tnode child" data-unit="'+u+'"><input type="checkbox" '+(checkedUnit===u?'checked':'')+'> '+u+'</div>';
+    });
+  });
+  document.getElementById('treeBox').innerHTML=h;
+}
+plocDlg.addEventListener('click',function(e){
+  var f=e.target.closest('[data-fac]'), u=e.target.closest('[data-unit]');
+  if(f){ var i=+f.dataset.fac; openFac[i]=!openFac[i]; renderTree(); }
+  if(u){
+    var unit=u.dataset.unit;
+    checkedUnit=(checkedUnit===unit)?null:unit;
+    document.getElementById('listName').value=checkedUnit||'';
+    document.getElementById('plocFinish').disabled=!checkedUnit;
+    renderTree();
+  }
+});
+document.getElementById('plocBack').onclick=function(){ showDlg(pltDlg); };
+document.getElementById('plocFinish').onclick=function(){
+  if(!checkedUnit) return;
+  var existing=-1;
+  PLISTS.forEach(function(L,i){ if(L.type==='Location'&&L.unit===checkedUnit) existing=i; });
+  if(existing<0){ PLISTS.push({name:checkedUnit,type:'Location',unit:checkedUnit}); existing=PLISTS.length-1; }
+  selAvail=existing; selActive=-1; renderMpl(); showDlg(mplDlg);
+};
+
+paintTabs();
+goOrganizer('Message Centre','','mc');
+})();
+</script>
+</body>
+</html>

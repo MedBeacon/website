@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>MedBeacon MPage</title>
+<link rel="stylesheet" href="_shared.css">
+</head>
+<body>
+<div class="pad">
+
+  <h1 class="page">MedBeacon</h1>
+
+  <div class="tabs">
+    <div class="tab active">Watchlist &nbsp;(12)</div>
+    <div class="tab">Open Alerts &nbsp;(5)</div>
+    <div class="tab">Acknowledged</div>
+    <div class="tab">Settings</div>
+  </div>
+
+  <div class="filters">
+    <span class="nav">&#9664;</span>
+    <span class="datebox">August 24, 2026</span>
+    <span class="calico"></span>
+    <span class="nav">&#9654;</span>
+    <span class="flab">Patients for:</span>
+    <span class="fval">MC 5W ; MC 6E ; MC ICU ; <b>Whitfield Service</b></span>
+    <span class="drop">&#9660;</span>
+    <span class="spacer"></span>
+    <span class="pill on">All</span><span class="pill">High</span><span class="pill">Rising</span><span class="pill">Unacknowledged</span>
+  </div>
+
+  <table class="grid">
+    <thead>
+      <tr>
+        <th style="width:8px"></th>
+        <th class="sorted" style="width:92px">Score</th>
+        <th style="width:112px">Trend</th>
+        <th style="width:265px">Patient</th>
+        <th style="width:150px">Location</th>
+        <th>Signal</th>
+        <th style="width:96px">Updated</th>
+        <th style="width:118px">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="gutter"></td><td><span class="sev high">92</span></td>
+        <td class="num"><span class="delta">&#9650; +18 / 4h</span></td>
+        <td><div class="pt" data-mrn="100254871">HARRINGTON, MARGARET E</div><div class="sub">78 Years, Female &#183; MRN 100254871</div></td>
+        <td>MC 5W / 5W12 A</td><td>Lactate 3.1, HR 118, RR 24, MAP 62</td>
+        <td class="num">14:28</td><td><button class="ack">Acknowledge</button></td>
+      </tr>
+      <tr>
+        <td class="gutter"></td><td><span class="sev high">84</span></td>
+        <td class="num"><span class="delta">&#9650; +11 / 6h</span></td>
+        <td><div class="pt" data-mrn="100318844">OKONKWO, DANIEL J</div><div class="sub">64 Years, Male &#183; MRN 100318844</div></td>
+        <td>MC ICU / ICU04</td><td>WBC 19.2, Temp 39.1, SBP 88</td>
+        <td class="num">14:22</td><td><button class="ack">Acknowledge</button></td>
+      </tr>
+      <tr>
+        <td class="gutter"></td><td><span class="sev med">67</span></td>
+        <td class="num"><span class="delta">&#9650; +6 / 12h</span></td>
+        <td><div class="pt" data-mrn="100290117">VASQUEZ, ROSA M</div><div class="sub">55 Years, Female &#183; MRN 100290117</div></td>
+        <td>MC 6E / 6E21 B</td><td>Creatinine 1.9 &#8593;, UOP 0.4 mL/kg/h</td>
+        <td class="num">13:55</td><td><button class="ack">Acknowledge</button></td>
+      </tr>
+      <tr>
+        <td class="gutter"></td><td><span class="sev med">61</span></td>
+        <td class="num"><span class="delta down">&#9660; -4 / 8h</span></td>
+        <td><div class="pt" data-mrn="100277203">BRENNAN, PATRICK L</div><div class="sub">71 Years, Male &#183; MRN 100277203</div></td>
+        <td>MC 5W / 5W03 A</td><td>SpO2 91% on 2L, RR 22</td>
+        <td class="num">13:40</td><td><button class="ack">Acknowledge</button></td>
+      </tr>
+      <tr class="muted"><td class="gutter"></td><td colspan="7">MC 6E / 6E14 &#183; no active signals</td></tr>
+      <tr>
+        <td class="gutter"></td><td><span class="sev low">38</span></td>
+        <td class="num"><span class="delta down">&#9660; -9 / 24h</span></td>
+        <td><div class="pt" data-mrn="100301992">LINDQVIST, ANNA K</div><div class="sub">46 Years, Female &#183; MRN 100301992</div></td>
+        <td>MC 6E / 6E08 A</td><td>Afebrile 18h, WBC trending down</td>
+        <td class="num">12:10</td><td><button class="ack">Acknowledge</button></td>
+      </tr>
+      <tr>
+        <td class="gutter"></td><td><span class="sev low">24</span></td>
+        <td class="num"><span class="delta down">&#9660; -2 / 24h</span></td>
+        <td><div class="pt" data-mrn="100322450">MARCHETTI, LEO S</div><div class="sub">33 Years, Male &#183; MRN 100322450</div></td>
+        <td>MC 5W / 5W18 B</td><td>Stable, monitoring only</td>
+        <td class="num">11:47</td><td><button class="ack">Acknowledge</button></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <b>Organizer-level MPage stub.</b>
+    Click any patient name to open that chart. It posts <code>{type:'openChart', mrn}</code> to the shell,
+    which opens a chart tab and switches to patient context. Replace this file with the real page.
+  </div>
+
+</div>
+
+<script>
+document.addEventListener('click',function(e){
+  var pt=e.target.closest('.pt'); if(!pt) return;
+  parent.postMessage({type:'openChart',mrn:pt.dataset.mrn},'*');
+});
+window.addEventListener('message',function(e){
+  if(e.data&&e.data.type==='zoom') document.body.style.zoom=e.data.value/100;
+});
+</script>
+</body>
+</html>

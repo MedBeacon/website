@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>MedBeacon - Patient View</title>
+<link rel="stylesheet" href="_shared.css">
+<style>
+.risk{display:flex;align-items:center;gap:14px;padding:10px 12px;margin-bottom:14px;
+  border:1px solid #d8a3a3;border-left:5px solid #c0392b;background:#fdf3f3}
+.risk .score{width:52px;height:52px;flex:0 0 52px;border-radius:50%;background:#c0392b;color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:700}
+.risk .txt{flex:1;min-width:0}
+.risk .txt b{display:block;font-size:13.5px;color:#8e2a1e}
+.risk .txt span{font-size:12px;color:#5f4b48}
+.btn{font:12px "Segoe UI",Tahoma,sans-serif;padding:5px 14px;border-radius:2px;border:1px solid #7da2ce;
+  background:linear-gradient(to bottom,#f6faff,#dce9f7);color:#14395c;cursor:pointer}
+.btn:hover{background:linear-gradient(to bottom,#fff,#cfe2f5)}
+.btn.primary{border-color:#1f4e79;background:linear-gradient(to bottom,#5b8dc0,#2c5f92);color:#fff}
+.btn.primary:hover{background:linear-gradient(to bottom,#6b9bcc,#376ea3)}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}
+@media (max-width:920px){.cols{grid-template-columns:1fr}}
+.comp{border:1px solid #d2d2d2}
+.comp h2{margin:0;font-size:12.5px;font-weight:600;color:#fff;padding:5px 10px;
+  background:linear-gradient(to bottom,#5b8dc0,#2c5f92);display:flex;align-items:center;gap:8px}
+.comp h2 .spacer{flex:1}
+.comp h2 a{color:#e2eefa;font-weight:400;font-size:11.5px}
+.comp .inner{padding:10px}
+.comp table{width:100%;border-collapse:collapse;font-size:12px}
+.comp th{background:#f4f6f8;color:#3d5a73;font-weight:600;text-align:left;padding:5px 10px;border-bottom:1px solid #d5dde4;white-space:nowrap}
+.comp td{padding:5px 10px;border-bottom:1px solid #eef1f4}
+.comp tr:last-child td{border-bottom:none}
+.comp td.num{text-align:right;font-variant-numeric:tabular-nums}
+.hi{color:#c0392b;font-weight:700}.lo{color:#0b6bb3;font-weight:700}.okv{color:#1a6b2f}
+.spark{display:inline-flex;align-items:flex-end;gap:2px;height:20px}
+.spark i{width:5px;background:#7fa8d0;display:block}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid #d5dde4;border-radius:11px;padding:2px 10px;font-size:11.5px;background:#f4f7fa;color:#2c4a66}
+.chip.alert{background:#fdeeee;border-color:#e0b4b4;color:#8e2a1e}
+.drv{display:flex;align-items:center;gap:8px;padding:4px 0}
+.drv .bar{flex:1;height:9px;background:#eceff2;border:1px solid #dde3e8}
+.drv .bar i{display:block;height:100%;background:#c0392b}
+.drv .lab{width:130px;font-size:12px}
+.drv .val{width:74px;text-align:right;font-size:12px;font-variant-numeric:tabular-nums}
+</style>
+</head>
+<body>
+<div class="pad">
+
+  <h1 class="page"><span class="crumb" id="back">&#9664; MedBeacon worklist</span><span id="ptName">MedBeacon</span></h1>
+
+  <div class="tabs">
+    <div class="tab active">Summary</div>
+    <div class="tab">Signal History</div>
+    <div class="tab">Actions Taken</div>
+    <div class="tab">Model Detail</div>
+  </div>
+
+  <div class="risk">
+    <div class="score" id="score">92</div>
+    <div class="txt">
+      <b id="riskLine">Sepsis risk elevated &#183; rising over the last 4 hours</b>
+      <span id="riskSub">Last scored 14:28 from vitals at 14:05 and labs at 13:42.</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px;align-items:flex-end">
+      <div style="display:flex;gap:8px">
+        <button class="btn primary" id="btnPlan">Open Sepsis Powerplan</button>
+        <button class="btn">Acknowledge</button>
+      </div>
+      <span class="applink" id="btnOpenApp">View alert detail &amp; interventions &#8250;</span>
+    </div>
+  </div>
+
+  <div class="cols">
+
+    <div class="comp">
+      <h2>Score Drivers<span class="spacer"></span><a href="#">Model detail</a></h2>
+      <div class="inner">
+        <div class="drv"><span class="lab">Lactic acid</span><span class="bar"><i style="width:88%"></i></span><span class="val">3.1 mmol/L</span></div>
+        <div class="drv"><span class="lab">Heart rate</span><span class="bar"><i style="width:74%"></i></span><span class="val">118 bpm</span></div>
+        <div class="drv"><span class="lab">Resp rate</span><span class="bar"><i style="width:66%"></i></span><span class="val">24 /min</span></div>
+        <div class="drv"><span class="lab">MAP</span><span class="bar"><i style="width:58%"></i></span><span class="val">62 mmHg</span></div>
+        <div class="drv"><span class="lab">WBC</span><span class="bar"><i style="width:52%"></i></span><span class="val">16.8 K/uL</span></div>
+        <div class="drv"><span class="lab">Temp</span><span class="bar"><i style="width:44%"></i></span><span class="val">38.9 &deg;C</span></div>
+      </div>
+    </div>
+
+    <div class="comp">
+      <h2>Vital Signs<span class="spacer"></span><a href="#">Last 24 hours</a></h2>
+      <table>
+        <thead><tr><th>Result</th><th class="num">14:05</th><th class="num">10:00</th><th class="num">06:00</th><th>Trend</th></tr></thead>
+        <tbody>
+          <tr><td>Temperature</td><td class="num hi">38.9</td><td class="num">38.2</td><td class="num">37.6</td><td><span class="spark"><i style="height:8px"></i><i style="height:13px"></i><i style="height:18px"></i></span></td></tr>
+          <tr><td>Heart Rate</td><td class="num hi">118</td><td class="num">104</td><td class="num">96</td><td><span class="spark"><i style="height:9px"></i><i style="height:14px"></i><i style="height:19px"></i></span></td></tr>
+          <tr><td>Resp Rate</td><td class="num hi">24</td><td class="num">20</td><td class="num">18</td><td><span class="spark"><i style="height:7px"></i><i style="height:12px"></i><i style="height:17px"></i></span></td></tr>
+          <tr><td>BP</td><td class="num">92/54</td><td class="num">104/62</td><td class="num">118/70</td><td><span class="spark"><i style="height:18px"></i><i style="height:13px"></i><i style="height:9px"></i></span></td></tr>
+          <tr><td>SpO2</td><td class="num">93%</td><td class="num">95%</td><td class="num">97%</td><td><span class="spark"><i style="height:18px"></i><i style="height:15px"></i><i style="height:12px"></i></span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="comp">
+      <h2>Labs<span class="spacer"></span><a href="#">Last 48 hours</a></h2>
+      <table>
+        <thead><tr><th>Test</th><th class="num">Result</th><th>Ref Range</th><th>Collected</th></tr></thead>
+        <tbody>
+          <tr><td>Lactic Acid</td><td class="num hi">3.1 mmol/L</td><td>0.5 - 2.0</td><td>08/24 13:42</td></tr>
+          <tr><td>WBC</td><td class="num hi">16.8 K/uL</td><td>4.0 - 11.0</td><td>08/24 06:10</td></tr>
+          <tr><td>Creatinine</td><td class="num hi">1.6 mg/dL</td><td>0.6 - 1.1</td><td>08/24 06:10</td></tr>
+          <tr><td>Hemoglobin</td><td class="num lo">10.2 g/dL</td><td>12.0 - 16.0</td><td>08/24 06:10</td></tr>
+          <tr><td>Blood Culture x2</td><td class="num">Pending</td><td>&mdash;</td><td>08/24 13:50</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="comp">
+      <h2>Recommended Actions</h2>
+      <table>
+        <tbody>
+          <tr><td>Repeat lactate within 2 hours</td><td class="num"><button class="ack">Order</button></td></tr>
+          <tr><td>Blood cultures before next antibiotic dose</td><td class="num okv">Collected 13:50</td></tr>
+          <tr><td>30 mL/kg crystalloid if hypotensive</td><td class="num"><button class="ack">Order</button></td></tr>
+          <tr><td>Reassess antibiotic coverage (ID consult)</td><td class="num"><button class="ack">Consult</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="comp">
+      <h2>Allergies</h2>
+      <div class="inner"><div class="chips" id="allergyChips">
+        <span class="chip alert">Penicillins &#183; Anaphylaxis</span>
+        <span class="chip alert">Sulfonamides &#183; Rash</span>
+        <span class="chip alert">Latex &#183; Contact dermatitis</span>
+      </div></div>
+    </div>
+
+    <div class="comp">
+      <h2>Care Team</h2>
+      <table>
+        <tbody>
+          <tr><td>Attending</td><td>Whitfield, Alan T, MD</td></tr>
+          <tr><td>Consulting</td><td>Nakamura, Iris K, MD &#183; Infectious Disease</td></tr>
+          <tr><td>Primary RN</td><td>Delgado, Priya S, RN</td></tr>
+          <tr><td>Pharmacist</td><td>Okafor, Ben T, PharmD</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <div class="note">
+    <b>Patient-level MPage stub.</b>
+    Opened with <code>?mrn=</code> from the shell, the same way Cerner passes person and encounter context to an MPage.
+    Replace <code>mpage/patient.html</code> with the real patient view.
+  </div>
+
+</div>
+
+<script>
+var DATA={
+ '100254871':{name:'HARRINGTON, MARGARET E',score:92,cls:'',line:'Sepsis risk elevated · rising over the last 4 hours',sub:'Last scored 14:28 from vitals at 14:05 and labs at 13:42.'},
+ '100318844':{name:'OKONKWO, DANIEL J',score:84,line:'Sepsis risk elevated · rising over the last 6 hours',sub:'Last scored 14:22 from vitals at 14:00 and labs at 12:30.'},
+ '100290117':{name:'VASQUEZ, ROSA M',score:67,line:'Acute kidney injury risk · rising over the last 12 hours',sub:'Last scored 13:55 from labs at 06:10 and I&O through 12:00.'},
+ '100277203':{name:'BRENNAN, PATRICK L',score:61,line:'Respiratory deterioration risk · easing over the last 8 hours',sub:'Last scored 13:40 from vitals at 13:15.'},
+ '100301992':{name:'LINDQVIST, ANNA K',score:38,line:'Risk low · falling over the last 24 hours',sub:'Last scored 12:10 from vitals at 12:00 and labs at 06:05.'},
+ '100322450':{name:'MARCHETTI, LEO S',score:24,line:'Risk low · stable',sub:'Last scored 11:47 from vitals at 11:30.'}
+};
+var mrn=(location.search.match(/mrn=(\d+)/)||[])[1];
+var d=DATA[mrn];
+if(d){
+  document.getElementById('ptName').textContent=d.name;
+  document.getElementById('score').textContent=d.score;
+  document.getElementById('riskLine').innerHTML=d.line;
+  document.getElementById('riskSub').textContent=d.sub;
+  var s=document.getElementById('score');
+  s.style.background = d.score>=80?'#c0392b' : d.score>=55?'#e08e0b' : '#4a8f3c';
+  var r=document.querySelector('.risk');
+  if(d.score<55){ r.style.background='#f2f9f2'; r.style.borderColor='#a9cfa4'; r.style.borderLeftColor='#4a8f3c'; }
+  else if(d.score<80){ r.style.background='#fdf8ee'; r.style.borderColor='#e0c58e'; r.style.borderLeftColor='#e08e0b'; }
+}
+document.getElementById('back').addEventListener('click',function(){ parent.postMessage({type:'goOrganizer'},'*'); });
+document.getElementById('btnOpenApp').addEventListener('click',function(){ location.href='detail.html?mrn='+(mrn||''); });
+
+window.addEventListener('message',function(e){
+  if(e.data&&e.data.type==='zoom') document.body.style.zoom=e.data.value/100;
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font:12px/1.4 "Segoe UI","Segoe UI Web",Tahoma,Geneva,Verdana,sans-serif;color:#1a1a1a;background:#fff}
+.pad{padding:14px 18px 30px}
+h1.page{font-size:16px;font-weight:700;color:#1f6fb2;margin:0 0 14px}
+h1.page .crumb{font-size:12px;font-weight:400;color:#0b4f9e;text-decoration:underline;cursor:pointer;margin-right:10px}
+h1.page .crumb:hover{color:#c0392b}
+
+.tabs{display:flex;align-items:flex-end;border-bottom:1px solid #b5b5b5;margin-bottom:14px}
+.tab{padding:7px 22px;margin-right:3px;border:1px solid #b5b5b5;border-bottom:none;border-radius:3px 3px 0 0;
+  background:linear-gradient(to bottom,#fbfbfb,#e9e9e9);color:#3a3a3a;cursor:default;position:relative;bottom:-1px;font-size:12.5px}
+.tab:hover{background:linear-gradient(to bottom,#fff,#f2f8fd)}
+.tab.active{background:#fff;border-bottom:1px solid #fff;color:#111;font-weight:600;padding:8px 22px}
+
+.filters{display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.nav{width:22px;height:22px;display:flex;align-items:center;justify-content:center;color:#2a6c9e;cursor:default;font-size:13px}
+.nav:hover{background:#e8f3fb;border:1px solid #a9cfe9;border-radius:2px}
+.datebox{border:1px solid #b5c4d1;background:#fff;padding:4px 16px;font-size:12.5px;min-width:190px;text-align:center}
+.calico{width:20px;height:18px;border:1px solid #7d8b98;border-radius:2px;background:#fff;position:relative}
+.calico:before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:#2a86c4}
+.calico:after{content:"";position:absolute;left:3px;top:8px;width:3px;height:3px;background:#6b8fb3;box-shadow:5px 0 0 #6b8fb3,10px 0 0 #6b8fb3,0 5px 0 #6b8fb3,5px 5px 0 #6b8fb3}
+.flab{color:#333;font-size:12.5px}.fval{font-size:12.5px}.drop{color:#33556f;font-size:9px}
+.pill{border:1px solid #b9cfe1;border-radius:11px;padding:2px 11px;font-size:11.5px;background:#eff7fc;color:#1f5c8b;cursor:default}
+.pill.on{background:#2a86c4;border-color:#1a6fa8;color:#fff;font-weight:600}
+.pill:hover{border-color:#7fb2dd}
+.spacer{flex:1}
+
+.grid{width:100%;border-collapse:collapse;border:1px solid #d2d2d2}
+.grid th{background:linear-gradient(to bottom,#fafafa,#f0f0f0);color:#3d3d3d;font-weight:400;font-size:12px;text-align:left;
+  padding:9px 12px;border-bottom:1px solid #c9c9c9;border-right:1px solid #e2e2e2;white-space:nowrap;vertical-align:bottom}
+.grid th.sorted:before{content:"\25B2";font-size:8px;color:#8a8a8a;display:block;margin-bottom:2px}
+.grid td{padding:9px 12px;border-bottom:1px solid #e6e6e6;border-right:1px solid #eee;vertical-align:top;font-size:12.5px}
+.grid tbody tr{background:#fff}
+.grid tbody tr:nth-child(even){background:#e6f2fa}
+.grid tbody tr.muted{background:#f0f0f0;color:#5c5c5c}
+.grid tbody tr:hover{background:#d7ecf8}
+.grid td.gutter{width:8px;padding:0;border-right:none}
+.pt{color:#1f6fb2;font-weight:700;font-size:12.5px;cursor:pointer}
+.pt:hover{color:#c0392b;text-decoration:underline}
+.sub{color:#4a4a4a;font-size:11.5px}
+.num{font-variant-numeric:tabular-nums}
+.sev{display:inline-block;min-width:34px;text-align:center;border-radius:2px;padding:2px 6px;font-weight:700;font-size:11.5px;color:#fff}
+.sev.high{background:#c0392b}.sev.med{background:#e08e0b}.sev.low{background:#4a8f3c}
+.delta{font-size:11px;color:#8e2a1e;font-weight:600}.delta.down{color:#1a6b2f}
+.ack{border:1px solid #b5c4d1;background:linear-gradient(to bottom,#fdfdfd,#ececec);padding:3px 10px;font-size:11.5px;border-radius:2px;cursor:pointer}
+.ack:hover{background:linear-gradient(to bottom,#fff,#dcecf8);border-color:#7fb2dd}
+
+.note{margin-top:16px;padding:14px;border:1px dashed #b9c6d3;border-radius:3px;color:#54636f;font-size:12px;
+  background:repeating-linear-gradient(45deg,#fafcfe,#fafcfe 10px,#f3f7fb 10px,#f3f7fb 20px)}
+.note b{display:block;color:#33556f;font-size:12.5px;margin-bottom:3px}
+code{background:#eef2f6;border:1px solid #dde5ec;border-radius:2px;padding:1px 5px}
+
+.applink{color:#0b4f9e;font-size:12px;text-decoration:underline;cursor:pointer;white-space:nowrap}
+.applink:hover{color:#c0392b}
