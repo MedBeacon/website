@@ -46,10 +46,22 @@
 # /demos/* — product demos built elsewhere and committed here as static output.
 #
 # /demos/desktop/ is the MedBeacon Desktop Prototype
-# (repo: MedBeacon/MedBeaconDesktopPrototype), built with:
-#     npm run build:site
-# and copied here. It is a Phase-1 prototype: no backend, synthetic data,
-# no PHI.
+# (repo: MedBeacon/MedBeaconDesktopPrototype). Phase-1 prototype: no backend,
+# synthetic data, no PHI.
+#
+# HOW TO REBUILD IT — read this first, a clean checkout will not do it.
+# The prototype is a Vite + react-router app, so the URL prefix is baked in at
+# build time. A build made for `/` cannot be dropped here: its asset URLs would
+# point at the domain root and the router would not match /demos/desktop/*.
+# Making it prefix-aware needs three edits that are deliberately NOT committed
+# to that repo (we publish only its output):
+#
+#   1. build with --base=/demos/desktop/
+#   2. src/main.tsx        <BrowserRouter basename={...}> from import.meta.env.BASE_URL
+#   3. src/components/BeaconMark.tsx   logo src prefixed with BASE_URL
+#
+# Shawn keeps those as uncommitted working-tree changes locally. Rebuilding
+# from a clean checkout without them produces a blank page at this path.
 # ─────────────────────────────────────────────────────────────────────────────
 
 # SPA fallback: the prototype is a client-side router, so a deep link like
