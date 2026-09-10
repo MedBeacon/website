@@ -41,3 +41,76 @@
 # Branch deploy context
 [context.branch-deploy]
   publish = "."
+
+# ─────────────────────────────────────────────────────────────────────────────
+# /demos/* — product demos built elsewhere and committed here as static output.
+#
+# /demos/desktop/ is the MedBeacon Desktop Prototype
+# (repo: MedBeacon/MedBeaconDesktopPrototype). Phase-1 prototype: no backend,
+# synthetic data, no PHI.
+#
+# HOW TO REBUILD IT — read this first, a clean checkout will not do it.
+# The prototype is a Vite + react-router app, so the URL prefix is baked in at
+# build time. A build made for `/` cannot be dropped here: its asset URLs would
+# point at the domain root and the router would not match /demos/desktop/*.
+# Making it prefix-aware needs three edits that are deliberately NOT committed
+# to that repo (we publish only its output):
+#
+#   1. build with --base=/demos/desktop/
+#   2. src/main.tsx        <BrowserRouter basename={...}> from import.meta.env.BASE_URL
+#   3. src/components/BeaconMark.tsx   logo src prefixed with BASE_URL
+#
+# Shawn keeps those as uncommitted working-tree changes locally. Rebuilding
+# from a clean checkout without them produces a blank page at this path.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# SPA fallback: the prototype is a client-side router, so a deep link like
+# /demos/desktop/patient/12 has no file on disk and would 404. No `force`, so
+# real files (the hashed assets) are still served directly and only unmatched
+# paths fall through to the app shell.
+[[redirects]]
+  from = "/demos/desktop/*"
+  to = "/demos/desktop/index.html"
+  status = 200
+
+# Content hashes in the filenames make these safe to cache forever. Overrides
+# the 10-minute /*.css and /*.js rules above.
+[[headers]]
+  for = "/demos/desktop/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# The prototype makes no network calls of its own, so connect-src stays 'self'.
+# The script-src hash covers the inline theme/zoom bootstrap in index.html
+# (it must run before first paint to avoid a flash of the wrong theme, so it
+# cannot be moved to an external file). Regenerate the hash if that inline
+# script ever changes. style-src keeps 'unsafe-inline' for runtime inline styles.
+[[headers]]
+  for = "/demos/desktop/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'sha256-l3tWVz1kaxqFurFF3lgOl80Tptb/TvtctqcLozXfK88='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+
+# /demos/mpage/ is the MedBeacon MPage mock — a fake PowerChart shell for
+# browser demos, sourced from DEMO/MedBeaconMPage (not itself in git).
+# Hand-written static HTML with no build step, so it is copied here as-is.
+# Every path in it is already relative, so it needs no sub-path build.
+
+# The shell and the MPage are separate documents, and the deep links carry
+# query strings (?mrn=). Real files win; this only catches mistyped paths.
+[[redirects]]
+  from = "/demos/mpage/*"
+  to = "/demos/mpage/index.html"
+  status = 200
+
+# Two things here differ from the other demos:
+#   - frame-ancestors is 'self', not 'none'. index.html frames
+#     mpage/index.html, and 'none' blocks that even same-origin.
+#   - script-src carries a hash per inline block: one each in index.html,
+#     mpage/index.html, mpage/patient.html and mpage/detail.html. Any edit
+#     to those scripts needs its hash regenerated or the page goes inert.
+# Self-contained otherwise: no external hosts, no fetches, so connect-src
+# stays 'self'.
+[[headers]]
+  for = "/demos/mpage/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'sha256-9sscnVYT0rFBG13SSAM5L8WFdMOiBL5Nu6857i5/XG4=' 'sha256-eEQeLdZD2Cw5Rr+6oV6Se29NA7CYNqM1poK/r7BVveU=' 'sha256-a2xSnH+X6hfkCVlwRlc430P+3joG9GTwO5QcWUPPkWM=' 'sha256-AYHdsa5qmJ7gu4yfBiLa40cAHdY9PD/gu4X/eHCtwyY='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
