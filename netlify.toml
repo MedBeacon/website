@@ -90,16 +90,29 @@
   [headers.values]
     Content-Security-Policy = "default-src 'self'; script-src 'self' 'sha256-l3tWVz1kaxqFurFF3lgOl80Tptb/TvtctqcLozXfK88='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
 
-# /demos/mpage/ is the MedBeacon MPage mock — a fake PowerChart shell for
+# /demos/integrated/ is MedBeacon Integrated — a fake PowerChart shell for
 # browser demos, sourced from DEMO/MedBeaconMPage (not itself in git).
 # Hand-written static HTML with no build step, so it is copied here as-is.
 # Every path in it is already relative, so it needs no sub-path build.
+#
+# It lived at /demos/mpage/ until the product name was settled. That path
+# also collided with the desktop prototype's own internal /mpage route
+# (medbeacon.ai/demos/desktop/mpage), which made the two easy to mix up.
+# The old path 301s here; keep that redirect while any links remain.
 
 # The shell and the MPage are separate documents, and the deep links carry
 # query strings (?mrn=). Real files win; this only catches mistyped paths.
+# Old path -> new. Must come before the fallback below, or the fallback
+# would swallow it.
 [[redirects]]
   from = "/demos/mpage/*"
-  to = "/demos/mpage/index.html"
+  to = "/demos/integrated/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/demos/integrated/*"
+  to = "/demos/integrated/index.html"
   status = 200
 
 # Two things here differ from the other demos:
@@ -111,6 +124,6 @@
 # Self-contained otherwise: no external hosts, no fetches, so connect-src
 # stays 'self'.
 [[headers]]
-  for = "/demos/mpage/*"
+  for = "/demos/integrated/*"
   [headers.values]
     Content-Security-Policy = "default-src 'self'; script-src 'self' 'sha256-9sscnVYT0rFBG13SSAM5L8WFdMOiBL5Nu6857i5/XG4=' 'sha256-eEQeLdZD2Cw5Rr+6oV6Se29NA7CYNqM1poK/r7BVveU=' 'sha256-a2xSnH+X6hfkCVlwRlc430P+3joG9GTwO5QcWUPPkWM=' 'sha256-AYHdsa5qmJ7gu4yfBiLa40cAHdY9PD/gu4X/eHCtwyY='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
