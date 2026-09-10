@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- The theme is chosen explicitly, never from the OS. This is the floor for
+     when app.css is slow or blocked; :root's color-scheme overrides it once
+     the stylesheet lands, including for the dark theme. -->
+<meta name="color-scheme" content="light">
+<title>MedBeacon Integrated</title>
+<link rel="stylesheet" href="vendor/cerner-smart-embeddable-lib-1.7.0.css">
+<link rel="stylesheet" href="css/app.css">
+<!-- Blocking, and in <head>, so data-theme is on <html> before the body paints
+     and no one sees a flash of the wrong palette. -->
+<script src="js/theme.js"></script>
+</head>
+<body class="mb-body">
+
+<div class="mb-chrome">
+  <div class="mb-themebar" id="theme-bar" role="group" aria-label="Colour theme">
+    <button class="mb-themebar__btn" type="button" data-theme-choice="light" aria-pressed="false">Light</button>
+    <button class="mb-themebar__btn" type="button" data-theme-choice="dim" aria-pressed="false">Dim</button>
+    <button class="mb-themebar__btn" type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
+  </div>
+</div>
+
+<!-- Boot state. Replaced once the handshake resolves. -->
+<div class="mb-boot" id="boot">
+  <div class="mb-boot__mark" aria-hidden="true"></div>
+  <h1 class="mb-boot__title">MedBeacon Integrated</h1>
+  <p class="mb-boot__status" id="boot-status" role="status">Completing sign-in&hellip;</p>
+</div>
+
+<div class="mb-alert mb-alert--error mb-alert--standalone" id="fatal" hidden>
+  <h2 class="mb-alert__title" id="fatal-title">Something went wrong</h2>
+  <p class="mb-alert__body" id="fatal-body"></p>
+  <p class="mb-alert__hint" id="fatal-hint"></p>
+  <button class="mb-button" id="fatal-retry" type="button" hidden>Try again</button>
+</div>
+
+<main class="mb-app" id="app" role="main" hidden>
+
+  <!-- Rendered only when the token response says PowerChart is not already
+       showing a banner. A second banner is a standard review finding. -->
+  <header class="mb-banner" id="banner" hidden>
+    <div class="mb-banner__identity">
+      <span class="mb-banner__name" id="banner-name">&mdash;</span>
+      <span class="mb-banner__meta" id="banner-meta"></span>
+    </div>
+    <div class="mb-banner__ids">
+      <span class="mb-banner__mrn" id="banner-mrn"></span>
+    </div>
+  </header>
+
+  <!-- No-patient provider launch lands here. Milestone 4 replaces this with
+       the house-wide acuity list. -->
+  <section class="mb-empty" id="no-patient" hidden>
+    <h2 class="mb-empty__title">No patient in context</h2>
+    <p class="mb-empty__body">
+      This launch did not carry a patient. The house-wide acuity list is not
+      built yet, so there is nothing to show.
+    </p>
+    <p class="mb-empty__hint">
+      Launch from a patient's chart to see demographics and vitals.
+    </p>
+  </section>
+
+  <div class="mb-grid" id="grid" hidden>
+
+    <section class="mb-card" aria-labelledby="demographics-heading">
+      <h2 class="mb-card__title" id="demographics-heading">Demographics</h2>
+      <!-- Card bodies are filled by app.js, which paints a busy state before
+           each fetch. The grid stays hidden until then, so there is nothing to
+           show here. -->
+      <div class="mb-card__body" id="demographics"></div>
+    </section>
+
+    <section class="mb-card mb-card--wide" aria-labelledby="vitals-heading">
+      <div class="mb-card__header">
+        <h2 class="mb-card__title" id="vitals-heading">Recent vitals</h2>
+        <span class="mb-card__note" id="vitals-note"></span>
+      </div>
+      <div class="mb-card__body" id="vitals"></div>
+    </section>
+
+    <!-- Full width: the list flows into as many columns as the frame allows,
+         so a long problem list stays on one screen. -->
+    <section class="mb-card mb-card--full" aria-labelledby="conditions-heading">
+      <div class="mb-card__header">
+        <h2 class="mb-card__title" id="conditions-heading">Active conditions</h2>
+        <span class="mb-card__note" id="conditions-note"></span>
+      </div>
+      <div class="mb-card__body" id="conditions"></div>
+    </section>
+
+  </div>
+
+  <footer class="mb-status" id="status-bar">
+    <dl class="mb-status__list" id="status-list"></dl>
+  </footer>
+</main>
+
+<script src="vendor/cerner-smart-embeddable-lib-1.7.0.min.js"></script>
+<script src="vendor/cerner-additions.js"></script>
+<script src="js/api.static.js"></script>
+<script src="js/render.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

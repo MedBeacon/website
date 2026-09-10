@@ -77,3 +77,27 @@
   for = "/demos/desktop/*"
   [headers.values]
     Content-Security-Policy = "default-src 'self'; script-src 'self' 'sha256-l3tWVz1kaxqFurFF3lgOl80Tptb/TvtctqcLozXfK88='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+
+# /demos/integrated/ is the MedBeacon Integrated MPage
+# (repo: MedBeacon/MedBeaconIntegrated), built with `npm run build:demo`.
+#
+# The real app is a server: its Cerner registration is a confidential client,
+# so the token exchange needs a secret and the FHIR reads go through a proxy.
+# This build is not that. It swaps the API layer for one that reads Cerner's
+# *open* R4 sandbox directly — the same synthetic patients, no authorization,
+# no secret, no server. See that repo's public/js/api.static.js.
+
+# Multi-page app, but the router is the filesystem, so this only catches
+# mistyped paths and sends them to the one real page.
+[[redirects]]
+  from = "/demos/integrated/*"
+  to = "/demos/integrated/index.html"
+  status = 200
+
+# Unlike the other demos this one does make a network call: the open Cerner
+# sandbox. connect-src has to name that host or every FHIR read is blocked.
+# No inline scripts in this build, so script-src needs no hash.
+[[headers]]
+  for = "/demos/integrated/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://fhir-open.cerner.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
