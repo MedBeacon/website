@@ -41,3 +41,39 @@
 # Branch deploy context
 [context.branch-deploy]
   publish = "."
+
+# ─────────────────────────────────────────────────────────────────────────────
+# /demos/* — product demos built elsewhere and committed here as static output.
+#
+# /demos/desktop/ is the MedBeacon Desktop Prototype
+# (repo: MedBeacon/MedBeaconDesktopPrototype), built with:
+#     npm run build:site
+# and copied here. It is a Phase-1 prototype: no backend, synthetic data,
+# no PHI.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# SPA fallback: the prototype is a client-side router, so a deep link like
+# /demos/desktop/patient/12 has no file on disk and would 404. No `force`, so
+# real files (the hashed assets) are still served directly and only unmatched
+# paths fall through to the app shell.
+[[redirects]]
+  from = "/demos/desktop/*"
+  to = "/demos/desktop/index.html"
+  status = 200
+
+# Content hashes in the filenames make these safe to cache forever. Overrides
+# the 10-minute /*.css and /*.js rules above.
+[[headers]]
+  for = "/demos/desktop/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# The prototype makes no network calls of its own, so connect-src stays 'self'.
+# The script-src hash covers the inline theme/zoom bootstrap in index.html
+# (it must run before first paint to avoid a flash of the wrong theme, so it
+# cannot be moved to an external file). Regenerate the hash if that inline
+# script ever changes. style-src keeps 'unsafe-inline' for runtime inline styles.
+[[headers]]
+  for = "/demos/desktop/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'sha256-l3tWVz1kaxqFurFF3lgOl80Tptb/TvtctqcLozXfK88='; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
